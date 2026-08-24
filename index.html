@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Chicago Fire FC — Commemorative Ticket</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Nothing on this page is ever written to localStorage/sessionStorage/IndexedDB/cookies.
+     All state lives in memory (see js/app.js) and disappears on reload by design. -->
+
+<div id="app">
+
+  <!-- ============ Screen 0: config load error ============ -->
+  <section id="screen-error" class="screen" hidden>
+    <div class="error-box">
+      <h1>Ticket unavailable</h1>
+      <p id="error-message">We couldn't load this match's info right now. Please try again in a bit.</p>
+    </div>
+  </section>
+
+  <!-- ============ Screen 1: welcome ============ -->
+  <section id="screen-welcome" class="screen" data-active>
+    <div class="welcome-content">
+      <img class="crest-hero" src="assets/fire-crest.svg" alt="Chicago Fire FC crest">
+      <h1>Make a Digital Keepsake Ticket</h1>
+      <p id="welcome-subtitle" class="welcome-subtitle"></p>
+      <button id="btn-start" class="btn btn-primary" type="button">Start</button>
+    </div>
+  </section>
+
+  <!-- ============ Screen 2: photo upload ============ -->
+  <section id="screen-upload" class="screen">
+    <div class="step-content">
+      <h2>Add a photo from the match</h2>
+      <p class="step-hint">This stays on your device — it's never uploaded anywhere.</p>
+
+      <div id="upload-preview-wrap" class="upload-preview-wrap">
+        <img id="upload-preview" alt="" hidden>
+        <div id="upload-placeholder" class="upload-placeholder">No photo selected</div>
+      </div>
+
+      <p id="upload-error" class="field-error" role="alert" hidden></p>
+
+      <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif" capture="environment" hidden>
+
+      <button id="btn-choose-photo" class="btn btn-primary" type="button">Upload photo</button>
+
+      <div class="step-nav">
+        <button id="btn-upload-skip" class="btn btn-link" type="button">Skip</button>
+        <button id="btn-upload-next" class="btn btn-secondary" type="button" disabled>Next</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Screen 3: section / row / seat ============ -->
+  <section id="screen-seat" class="screen">
+    <div class="step-content">
+      <h2>Add your seat</h2>
+      <p class="step-hint">Optional — up to 10 letters/numbers each.</p>
+
+      <form id="seat-form" class="seat-form" novalidate>
+        <label class="seat-field">
+          <span>Section</span>
+          <input id="input-section" name="section" type="text" maxlength="10" autocomplete="off" inputmode="text">
+        </label>
+        <label class="seat-field">
+          <span>Row</span>
+          <input id="input-row" name="row" type="text" maxlength="10" autocomplete="off" inputmode="text">
+        </label>
+        <label class="seat-field">
+          <span>Seat</span>
+          <input id="input-seat" name="seat" type="text" maxlength="10" autocomplete="off" inputmode="text">
+        </label>
+      </form>
+      <p id="seat-error" class="field-error" role="alert" hidden></p>
+
+      <div class="step-nav">
+        <button id="btn-seat-skip" class="btn btn-link" type="button">Skip</button>
+        <button id="btn-seat-next" class="btn btn-secondary" type="button">Make my ticket</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Screen 4: loading ============ -->
+  <section id="screen-loading" class="screen">
+    <div class="loading-content">
+      <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+      <p>Making your ticket…</p>
+    </div>
+  </section>
+
+  <!-- ============ Screen 5: preview & share ============ -->
+  <section id="screen-preview" class="screen">
+    <div class="preview-content">
+      <canvas id="ticket-canvas"></canvas>
+      <p id="share-error" class="field-error" role="alert" hidden></p>
+      <div class="preview-actions">
+        <button id="btn-share" class="btn btn-primary" type="button" hidden>Share</button>
+        <button id="btn-save" class="btn btn-secondary" type="button">Save image</button>
+        <button id="btn-restart" class="btn btn-link" type="button">Make another</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/ticket-canvas.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

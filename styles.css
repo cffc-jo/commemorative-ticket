@@ -1,0 +1,215 @@
+/* Chicago Fire FC — Commemorative Ticket
+   Mobile-only layout (this page is loaded inside a native WebView, never a desktop browser). */
+
+:root {
+  --red-bright: #FF0000;
+  --red-mid: #AA0000;
+  --red-deep: #760000;
+  --red-black: #450000;
+  --navy: #171A45;
+  --navy-black: #160C26;
+  --near-black: #160008;
+  --white: #FFFFFF;
+  --sky: #7DCCF0;
+
+  --bg: var(--navy-black);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--white);
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.screen {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  padding: calc(24px + var(--safe-top)) 24px calc(24px + var(--safe-bottom));
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.screen[data-active] { display: flex; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  padding: 16px 20px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn[hidden] { display: none; } /* .btn's own `display: block` would otherwise beat the UA [hidden] rule */
+
+.btn-primary {
+  background: var(--red-bright);
+  color: var(--white);
+}
+.btn-secondary {
+  background: var(--navy);
+  color: var(--white);
+}
+.btn-link {
+  background: transparent;
+  color: var(--sky);
+  text-decoration: underline;
+  padding: 12px 8px;
+}
+
+/* ---------- Welcome ---------- */
+.welcome-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+}
+.crest-hero { width: 140px; height: 140px; margin-bottom: 8px; }
+.welcome-content h1 { font-size: 28px; margin: 0; line-height: 1.2; }
+.welcome-subtitle { color: var(--sky); font-size: 15px; margin: 0 0 16px; min-height: 1.2em; }
+.welcome-content .btn { margin-top: 8px; }
+
+/* ---------- Step screens (upload / seat) ---------- */
+.step-content { display: flex; flex-direction: column; flex: 1; }
+.step-content h2 { font-size: 22px; margin: 0 0 4px; }
+.step-hint { color: var(--sky); font-size: 14px; margin: 0 0 20px; }
+
+.upload-preview-wrap {
+  flex: 1;
+  min-height: 260px;
+  border: 2px dashed var(--navy);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.upload-preview-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.upload-placeholder { color: rgba(255,255,255,0.5); font-size: 14px; }
+
+.seat-form { display: flex; gap: 12px; margin-bottom: 8px; }
+.seat-field { flex: 1; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--sky); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.seat-field input {
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--near-black);
+  background: var(--white);
+  border: none;
+  border-radius: 4px;
+  padding: 12px 10px;
+  width: 100%;
+  text-align: center;
+}
+.seat-field input:focus { outline: 3px solid var(--red-bright); }
+
+.field-error {
+  color: var(--red-bright);
+  background: rgba(255,0,0,0.08);
+  border: 1px solid var(--red-mid);
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+.step-nav {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 16px;
+}
+.step-nav .btn-link { align-self: center; }
+
+/* ---------- Loading ---------- */
+.loading-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+}
+.progress-track {
+  width: 220px;
+  height: 8px;
+  background: var(--navy);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 8%;
+  background: linear-gradient(90deg, var(--red-mid), var(--red-bright));
+  border-radius: 4px;
+  transition: width 0.25s ease;
+}
+.loading-content p { color: var(--sky); font-size: 14px; margin: 0; letter-spacing: 0.03em; }
+
+/* ---------- Preview ---------- */
+.preview-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+#ticket-canvas {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.preview-actions {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+}
+
+/* ---------- Error screen ---------- */
+.error-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+}
+.error-box h1 { font-size: 22px; margin: 0; }
+.error-box p { color: var(--sky); font-size: 14px; }

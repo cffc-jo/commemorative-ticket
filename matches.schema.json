@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chicago Fire FC Commemorative Ticket — Match Config",
+  "description": "Team-managed match info that drives the commemorative ticket feature. Edited directly in this repo (via the GitHub web UI or a PR) whenever match details change or a new match should be featured.",
+  "type": "object",
+  "required": ["schemaVersion", "match"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "Version of this schema, for future migrations. Leave as \"1.0\" unless the structure changes.",
+      "const": "1.0"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional. ISO 8601 timestamp of the last edit, for editors' own reference. Not used by the app logic."
+    },
+    "match": {
+      "type": "object",
+      "required": ["id", "opponent", "venue", "date", "kickoffTime", "timezone", "isHome"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique slug for this match, e.g. \"2026-08-23-chi-vs-nycfc\". Used internally (e.g. as part of the generated filename) — not shown to users.",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "opponent": {
+          "type": "object",
+          "required": ["name", "logoUrl"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Full opponent club name as it should display on the ticket, e.g. \"New York City FC\"."
+            },
+            "shortName": {
+              "type": "string",
+              "description": "Optional abbreviation for tight layouts, e.g. \"NYCFC\"."
+            },
+            "logoUrl": {
+              "type": "string",
+              "description": "Relative path to the opponent's logo image, e.g. \"assets/logos/nycfc.png\". Recommended: transparent PNG or SVG, square-ish crop."
+            }
+          }
+        },
+        "isHome": {
+          "type": "boolean",
+          "description": "True if this is a Chicago Fire FC home match. Controls \"vs.\" / \"@\" display and which club logo appears first."
+        },
+        "venue": {
+          "type": "object",
+          "required": ["name", "city"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Venue name, e.g. \"Soldier Field\"."
+            },
+            "city": {
+              "type": "string",
+              "description": "City/state for display, e.g. \"Chicago, IL\"."
+            },
+            "backgroundImageUrl": {
+              "type": "string",
+              "description": "Optional. Relative path to a venue photo/illustration used as ticket background art, if the design calls for a venue-specific background."
+            }
+          }
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Match date in ISO 8601 (YYYY-MM-DD), local to the venue, e.g. \"2026-08-23\"."
+        },
+        "kickoffTime": {
+          "type": "string",
+          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+          "description": "Kickoff time in 24-hour HH:MM, local to the venue, e.g. \"19:30\"."
+        },
+        "timezone": {
+          "type": "string",
+          "description": "IANA timezone identifier for the venue, e.g. \"America/Chicago\". Used to format the displayed date/time correctly regardless of the fan's own device timezone."
+        },
+        "competition": {
+          "type": "string",
+          "description": "Optional competition label, e.g. \"MLS Regular Season\", \"U.S. Open Cup\", \"Leagues Cup\"."
+        },
+        "ticketTemplateVariant": {
+          "type": "string",
+          "description": "Optional. Selects an alternate ticket art variant if more than one exists (e.g. \"default\", \"rivalry\", \"playoff\"). Omit to use the default template."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "lastUpdated": "2026-08-17T10:00:00-05:00",
+  "match": {
+    "id": "2026-08-23-chi-vs-nycfc",
+    "opponent": {
+      "name": "New York City FC",
+      "shortName": "NYCFC",
+      "logoUrl": "assets/logos/nycfc.png"
+    },
+    "isHome": true,
+    "venue": {
+      "name": "Soldier Field",
+      "city": "Chicago, IL",
+      "backgroundImageUrl": "assets/venues/soldier-field.jpg"
+    },
+    "date": "2026-08-23",
+    "kickoffTime": "19:30",
+    "timezone": "America/Chicago",
+    "competition": "MLS Regular Season",
+    "ticketTemplateVariant": "default"
+  }
+}

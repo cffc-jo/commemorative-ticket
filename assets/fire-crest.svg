@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Placeholder Chicago Fire FC-style crest. Swap for the official crest artwork file before shipping. -->
+  <g>
+    <!-- four outer tabs -->
+    <rect x="86" y="2" width="28" height="22" fill="#7DCCF0"/>
+    <rect x="86" y="176" width="28" height="22" fill="#7DCCF0"/>
+    <rect x="2" y="86" width="22" height="28" fill="#7DCCF0"/>
+    <rect x="176" y="86" width="22" height="28" fill="#7DCCF0"/>
+    <!-- navy outer ring -->
+    <circle cx="100" cy="100" r="86" fill="none" stroke="#171A45" stroke-width="6"/>
+    <!-- light blue ring -->
+    <circle cx="100" cy="100" r="80" fill="#7DCCF0"/>
+    <!-- white inner circle -->
+    <circle cx="100" cy="100" r="58" fill="#FFFFFF"/>
+    <!-- red C shape -->
+    <path d="M124 62
+             a44 44 0 1 0 0 76
+             l0 -18
+             a26 26 0 1 1 0 -40
+             z" fill="#FF0000"/>
+    <!-- star cutout -->
+    <path d="M114 92 l4.5 9.2 10.1 1.5 -7.3 7.1 1.7 10.1 -9-4.8 -9 4.8 1.7-10.1 -7.3-7.1 10.1-1.5z" fill="#FFFFFF"/>
+  </g>
+</svg>
