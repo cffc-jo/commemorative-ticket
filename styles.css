@@ -1,5 +1,10 @@
 /* Chicago Fire FC — Commemorative Ticket
-   Mobile-only layout (this page is loaded inside a native WebView, never a desktop browser). */
+   Mobile-only layout (this page is loaded inside a native WebView, never a desktop browser).
+
+   Palette: red is the dominant background/primary color throughout the app shell (darker
+   end of the red range for backgrounds/surfaces, brighter end for primary actions/emphasis).
+   Navy is the secondary/depth color (secondary buttons, borders). Sky blue is reserved for
+   small accent details only (Skip/secondary links, focus rings) — never a large fill. */
 
 :root {
   --red-bright: #FF0000;
@@ -12,7 +17,9 @@
   --white: #FFFFFF;
   --sky: #7DCCF0;
 
-  --bg: var(--navy-black);
+  --bg: var(--red-black);
+  --surface: var(--red-deep);
+  --text-soft: rgba(255, 255, 255, 0.8);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -75,6 +82,8 @@ html, body {
   color: var(--white);
 }
 .btn-link {
+  /* Deliberately the one place sky blue carries meaning: a small, low-emphasis text
+     action (Skip / Make another), never a fill. */
   background: transparent;
   color: var(--sky);
   text-decoration: underline;
@@ -93,20 +102,20 @@ html, body {
 }
 .crest-hero { width: 140px; height: 140px; margin-bottom: 8px; }
 .welcome-content h1 { font-size: 28px; margin: 0; line-height: 1.2; }
-.welcome-subtitle { color: var(--sky); font-size: 15px; margin: 0 0 16px; min-height: 1.2em; }
+.welcome-subtitle { color: var(--text-soft); font-size: 15px; margin: 0 0 16px; min-height: 1.2em; }
 .welcome-content .btn { margin-top: 8px; }
 
 /* ---------- Step screens (upload / seat) ---------- */
 .step-content { display: flex; flex-direction: column; flex: 1; }
 .step-content h2 { font-size: 22px; margin: 0 0 4px; }
-.step-hint { color: var(--sky); font-size: 14px; margin: 0 0 20px; }
+.step-hint { color: var(--text-soft); font-size: 14px; margin: 0 0 20px; }
 
 .upload-preview-wrap {
   flex: 1;
   min-height: 260px;
-  border: 2px dashed var(--navy);
+  border: 2px dashed rgba(255, 255, 255, 0.35);
   border-radius: 8px;
-  background: rgba(255,255,255,0.04);
+  background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,10 +123,10 @@ html, body {
   margin-bottom: 20px;
 }
 .upload-preview-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.upload-placeholder { color: rgba(255,255,255,0.5); font-size: 14px; }
+.upload-placeholder { color: rgba(255,255,255,0.6); font-size: 14px; }
 
 .seat-form { display: flex; gap: 12px; margin-bottom: 8px; }
-.seat-field { flex: 1; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--sky); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.seat-field { flex: 1; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--white); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .seat-field input {
   font-family: inherit;
   font-size: 20px;
@@ -130,12 +139,13 @@ html, body {
   width: 100%;
   text-align: center;
 }
-.seat-field input:focus { outline: 3px solid var(--red-bright); }
+/* Sky blue accent: a small, functional focus indicator — not a fill. */
+.seat-field input:focus { outline: 3px solid var(--sky); }
 
 .field-error {
-  color: var(--red-bright);
-  background: rgba(255,0,0,0.08);
-  border: 1px solid var(--red-mid);
+  color: var(--white);
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--red-bright);
   border-radius: 4px;
   padding: 10px 12px;
   font-size: 13px;
@@ -164,7 +174,7 @@ html, body {
 .progress-track {
   width: 220px;
   height: 8px;
-  background: var(--navy);
+  background: var(--surface);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -175,7 +185,7 @@ html, body {
   border-radius: 4px;
   transition: width 0.25s ease;
 }
-.loading-content p { color: var(--sky); font-size: 14px; margin: 0; letter-spacing: 0.03em; }
+.loading-content p { color: var(--text-soft); font-size: 14px; margin: 0; letter-spacing: 0.03em; }
 
 /* ---------- Preview ---------- */
 .preview-content {
@@ -212,4 +222,4 @@ html, body {
   gap: 8px;
 }
 .error-box h1 { font-size: 22px; margin: 0; }
-.error-box p { color: var(--sky); font-size: 14px; }
+.error-box p { color: var(--text-soft); font-size: 14px; }
