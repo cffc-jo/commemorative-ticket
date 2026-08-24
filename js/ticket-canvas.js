@@ -181,13 +181,21 @@ async function renderTicket(canvas, { match, photoImage, crestImage, section, ro
   ctx.fillText(`KICKOFF ${timeStr}`, 60, cursorY + 20);
   cursorY += 70;
 
-  // section / row / seat columns
-  const cols = [
-    { label: "SEC", value: section || "—" },
-    { label: "ROW", value: row || "—" },
-    { label: "SEAT", value: seat || "—" },
+  // section / row / seat columns — skipped fields are omitted entirely, not shown as "—".
+  const allCols = [
+    { label: "SEC", value: (section || "").trim() },
+    { label: "ROW", value: (row || "").trim() },
+    { label: "SEAT", value: (seat || "").trim() },
   ];
-  const colCenters = [TICKET_W * 0.18, TICKET_W * 0.5, TICKET_W * 0.82];
+  const cols = allCols.filter((col) => col.value.length > 0);
+
+  // Center positions per column count, tuned to echo the wireframe's wide 3-up spread.
+  const CENTERS_BY_COUNT = {
+    1: [0.5],
+    2: [0.3, 0.7],
+    3: [0.18, 0.5, 0.82],
+  };
+  const colCenters = (CENTERS_BY_COUNT[cols.length] || []).map((f) => TICKET_W * f);
   const rowY = footerY + FOOTER_H - 90;
 
   cols.forEach((col, i) => {
