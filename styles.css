@@ -17,9 +17,9 @@
   --white: #FFFFFF;
   --sky: #7DCCF0;
 
-  --bg: var(--red-black);
-  --surface: var(--red-deep);
-  --text-soft: rgba(255, 255, 255, 0.8);
+  --bg: var(--red-bright);
+  --surface: var(--red-black);
+  --text-soft: rgba(255, 255, 255, 0.85);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -74,8 +74,10 @@ html, body {
 .btn[hidden] { display: none; } /* .btn's own `display: block` would otherwise beat the UA [hidden] rule */
 
 .btn-primary {
-  background: var(--red-bright);
-  color: var(--white);
+  /* Page background is red-bright, so the primary button inverts to stay legible as a
+     tappable surface — the red carries through as the button's text color instead. */
+  background: var(--white);
+  color: var(--red-bright);
 }
 .btn-secondary {
   background: var(--navy);
@@ -144,8 +146,8 @@ html, body {
 
 .field-error {
   color: var(--white);
-  background: rgba(0,0,0,0.2);
-  border: 1px solid var(--red-bright);
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--white);
   border-radius: 4px;
   padding: 10px 12px;
   font-size: 13px;
