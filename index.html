@@ -45,7 +45,11 @@
 
       <p id="upload-error" class="field-error" role="alert" hidden></p>
 
-      <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif" capture="environment" hidden>
+      <!-- No `capture` attribute here on purpose: on iOS Safari/WebView, `capture="environment"`
+           forces the camera open directly and skips the OS picker entirely. Without it, tapping
+           this input shows the standard action sheet (Photo Library, Take Photo, ...), so the
+           library is offered as a choice rather than being bypassed. -->
+      <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif" hidden>
 
       <button id="btn-choose-photo" class="btn btn-primary" type="button">Upload photo</button>
 
