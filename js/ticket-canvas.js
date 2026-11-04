@@ -320,9 +320,9 @@ function drawClassicFooter(ctx, match, dateStr, timeStr, cols) {
   // With no seat info the stub is dropped, so re-center the info block in the freed space.
   const oy = hasStub ? 0 : 80;
 
-  // red + navy rule under the photo
-  ctx.fillStyle = COLOR.redBright; ctx.fillRect(0, FOOTER_Y, TICKET_W, 12);
-  ctx.fillStyle = COLOR.navy; ctx.fillRect(0, FOOTER_Y + 12, TICKET_W, 4);
+  // navy (thin, on top) + red (thicker, below) rule under the photo
+  ctx.fillStyle = COLOR.navy; ctx.fillRect(0, FOOTER_Y, TICKET_W, 4);
+  ctx.fillStyle = COLOR.redBright; ctx.fillRect(0, FOOTER_Y + 4, TICKET_W, 12);
   drawHatch(ctx, 0, FOOTER_Y + 16, TICKET_W, FOOTER_H - 16, 14, COLOR.navy, 0.035, 2);
 
   const maxW = TICKET_W - 120;
