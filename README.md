@@ -36,9 +36,11 @@ Key fields:
   matches show the opponent's crest on the left ("Opponent @ ..." reads as the hosting
   club). Flip the `fireSlot`/`oppSlot` logic in [`js/ticket-canvas.js`](js/ticket-canvas.js)
   if club design wants the opposite convention.
-- `opponent.logoUrl` — relative path to a logo file (see `assets/logos/`). No real
-  opponent logos are checked in yet; until they are, the ticket automatically falls
-  back to a clearly-labeled "OPPONENT LOGO" placeholder box rather than breaking.
+- `opponent.logoUrl` — relative path to a logo file. A library of MLS club logos lives in
+  `assets/logos/` (one file per club code, e.g. `assets/logos/nyc.png`; see the table in
+  [`assets/logos/README.md`](assets/logos/README.md)). If the file is missing or fails to
+  load, the ticket falls back to a clearly-labeled "OPPONENT LOGO" placeholder box
+  rather than breaking.
 - `date` / `kickoffTime` / `timezone` — always entered **local to the venue**. The app
   converts to Central time for display (see "Time zone" below), so venue timezone must
   be accurate for the conversion to be correct.
@@ -90,9 +92,10 @@ the fix is to add a decode step (e.g. the `heic2any` library) in `onFileSelected
 
 ## Open items / follow-ups
 
-- **Opponent logo library** — no real opponent crests are checked in. Drop files into
-  `assets/logos/` and point `matches.json` → `opponent.logoUrl` at them; no code
-  changes needed. Until then, the ticket shows a placeholder box.
+- **Opponent logo library** — done: 30 MLS club logos are in `assets/logos/` (downscaled
+  to 600px for fast WebView loads). To feature a match, point `matches.json` →
+  `opponent.logoUrl` at the right file; no code changes needed. New clubs (e.g. expansion
+  or Leagues Cup / U.S. Open Cup opponents) just need a new PNG dropped in the same folder.
 - **Section/seat validation** — currently free-text, 0–10 alphanumeric characters,
   optional. No fixed section list exists yet; tightening this to a real allow-list
   later is a small, isolated change (`SEAT_FIELD_PATTERN` in `js/app.js`).
