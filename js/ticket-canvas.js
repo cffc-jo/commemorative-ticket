@@ -192,23 +192,62 @@ function drawLogoPlaceholder(ctx, x, y, size) {
 // DEFAULT VARIANT — split banner header + classic footer with tear-off stub
 // ===========================================================================
 
-/** White circular badge holding a logo (or a labeled placeholder if the logo is missing). */
-function drawLogoBadge(ctx, cx, cy, r, img) {
+/**
+ * Draws a logo with a white outline that follows its shape (no background disc).
+ * Built by stamping a white silhouette of the logo around a small circle, then drawing the logo on top.
+ */
+function drawStrokedLogo(ctx, img, cx, cy, box, stroke = 9) {
+  const scale = Math.min(box / img.width, box / img.height);
+  const w = Math.round(img.width * scale);
+  const h = Math.round(img.height * scale);
+  const pad = stroke + 2;
+
+  // 1) white silhouette of the logo (its alpha shape filled solid white)
+  const sil = document.createElement("canvas");
+  sil.width = w + pad * 2; sil.height = h + pad * 2;
+  const s = sil.getContext("2d");
+  s.drawImage(img, pad, pad, w, h);
+  s.globalCompositeOperation = "source-in";
+  s.fillStyle = COLOR.white;
+  s.fillRect(0, 0, sil.width, sil.height);
+  // Binarize: stamping the silhouette dozens of times would turn nearly-invisible stray pixels
+  // (faint leftovers in some logo files) into solid white specks, so only count solid-ish pixels.
+  try {
+    const px = s.getImageData(0, 0, sil.width, sil.height);
+    for (let i = 3; i < px.data.length; i += 4) px.data[i] = px.data[i] >= 96 ? 255 : 0;
+    s.putImageData(px, 0, 0);
+  } catch (e) { /* canvas not readable: fall back to the un-thresholded silhouette */ }
+
+  // 2) dilate it: stamp the silhouette around a circle (two rings, so there are no gaps)
+  const out = document.createElement("canvas");
+  out.width = sil.width; out.height = sil.height;
+  const o = out.getContext("2d");
+  [stroke, stroke * 0.5].forEach((r) => {
+    for (let i = 0; i < 36; i++) {
+      const a = (i / 36) * Math.PI * 2;
+      o.drawImage(sil, Math.cos(a) * r, Math.sin(a) * r);
+    }
+  });
+  o.drawImage(sil, 0, 0);
+
+  // 3) outline (with a soft shadow for lift), then the logo itself on top
   ctx.save();
-  ctx.shadowColor = "rgba(0,0,0,0.3)"; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
-  ctx.fillStyle = COLOR.white;
-  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+  ctx.shadowColor = "rgba(0,0,0,0.28)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
+  ctx.drawImage(out, cx - out.width / 2, cy - out.height / 2);
   ctx.restore();
-  if (img) {
-    drawImageFit(ctx, img, cx, cy, 2 * r * 0.72);
-  } else {
-    ctx.save();
-    ctx.fillStyle = COLOR.navy;
-    ctx.font = `700 22px ${FONT_STACK}`;
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    wrapText(ctx, "OPPONENT\nLOGO", cx, cy, 26);
-    ctx.restore();
-  }
+  ctx.drawImage(img, cx - w / 2, cy - h / 2, w, h);
+}
+
+/** Labeled stand-in drawn when an opponent logo is missing: a white ring with white text. */
+function drawLogoPlaceholderRing(ctx, cx, cy, box) {
+  ctx.save();
+  ctx.strokeStyle = COLOR.white; ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.arc(cx, cy, box / 2 - 4, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = COLOR.white;
+  ctx.font = `800 26px ${FONT_STACK}`;
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  wrapText(ctx, "OPPONENT\nLOGO", cx, cy, 32);
+  ctx.restore();
 }
 
 function drawSplitHeader(ctx, match, crestImage, opponentLogo) {
@@ -229,18 +268,22 @@ function drawSplitHeader(ctx, match, crestImage, opponentLogo) {
   ctx.restore();
 
   // Home: Fire (left, on red) VS opponent (right, on navy). Away: opponent first, then "@" Fire.
-  // The opponent always sits in a white badge so dark crests stay legible on either half.
+  // Both logos get the same bounding box. The opponent always has a white outline so dark crests
+  // stay legible on either half; on away games the Fire crest also sits on the navy half, where
+  // its own navy ring would otherwise vanish, so it gets the same outline.
   const leftCx = 250;
   const rightCx = TICKET_W - 270;
-  const crestSize = 214;
-  const badgeR = 104;
-  const crestOnLeft = match.isHome;
-  if (crestOnLeft) {
-    if (crestImage) drawImageFit(ctx, crestImage, leftCx, cy, crestSize);
-    drawLogoBadge(ctx, rightCx, cy, badgeR, opponentLogo);
+  const logoBox = 214;
+  const drawOpponent = (x) => {
+    if (opponentLogo) drawStrokedLogo(ctx, opponentLogo, x, cy, logoBox);
+    else drawLogoPlaceholderRing(ctx, x, cy, logoBox);
+  };
+  if (match.isHome) {
+    if (crestImage) drawImageFit(ctx, crestImage, leftCx, cy, logoBox);
+    drawOpponent(rightCx);
   } else {
-    drawLogoBadge(ctx, leftCx, cy, badgeR, opponentLogo);
-    if (crestImage) drawLogoBadge(ctx, rightCx, cy, badgeR, crestImage);
+    drawOpponent(leftCx);
+    if (crestImage) drawStrokedLogo(ctx, crestImage, rightCx, cy, logoBox);
   }
 
   // VS / @ medallion centered on the seam at mid-height
