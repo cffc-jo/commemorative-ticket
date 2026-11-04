@@ -4,7 +4,11 @@
    Palette: red is the dominant background/primary color throughout the app shell (darker
    end of the red range for backgrounds/surfaces, brighter end for primary actions/emphasis).
    Navy is the secondary/depth color (secondary buttons, borders). Sky blue is reserved for
-   small accent details only (Skip/secondary links, focus rings) — never a large fill. */
+   small accent details only (Skip/secondary links, focus rings) — never a large fill.
+
+   Background ("Fine Grid, soft"): a gentle radial gradient from --red-mid to --red-deep, with a
+   hairline grid + small corner crosshairs that fade out toward the edges. It's drawn on two
+   fixed, non-interactive layers (body::before / body::after) behind #app. */
 
 :root {
   --red-bright: #FF0000;
@@ -17,7 +21,7 @@
   --white: #FFFFFF;
   --sky: #7DCCF0;
 
-  --bg: var(--red-bright);
+  --bg: var(--red-deep); /* flat fallback / overscroll color; the gradient + grid sit on top (below) */
   --surface: var(--red-black);
   --text-soft: rgba(255, 255, 255, 0.85);
   --safe-top: env(safe-area-inset-top, 0px);
@@ -36,6 +40,35 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Layer 1: soft red gradient, centered roughly where the ticket / main content sits. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(circle 700px at 50% 40%, var(--red-mid), var(--red-deep));
+}
+
+/* Layer 2: hairline grid (40px minor, 160px major) with small crosshairs at the major
+   intersections, faded out radially so it never competes with content at the edges. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cpath d='M0 .5h5M.5 0v5M155 .5h5M159.5 0v5M0 159.5h5M.5 155v5M155 159.5h5M159.5 155v5' stroke='white' stroke-opacity='.38' fill='none'/%3E%3C/svg%3E"),
+    linear-gradient(to right, rgba(255, 255, 255, 0.13) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.13) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 160px 160px, 160px 160px, 160px 160px, 40px 40px, 40px 40px;
+  -webkit-mask-image: radial-gradient(circle 490px at 50% 40%, #000 15%, transparent 100%);
+  mask-image: radial-gradient(circle 490px at 50% 40%, #000 15%, transparent 100%);
+}
+
 #app {
   min-height: 100vh;
   min-height: 100dvh;
@@ -44,6 +77,7 @@ html, body {
   max-width: 480px;
   margin: 0 auto;
   position: relative;
+  z-index: 1; /* above the background layers */
 }
 
 .screen {
