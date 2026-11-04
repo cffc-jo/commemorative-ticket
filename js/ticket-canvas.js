@@ -305,7 +305,7 @@ function drawClassicFooter(ctx, match, dateStr, timeStr, cols) {
 
   if (!hasStub) return;
 
-  // tear-off stub: dashed line, edge notches, then section / row / seat
+  // tear-off stub: dashed line, then section / row / seat
   const tearY = FOOTER_Y + 312;
   drawDashedLine(ctx, 50, TICKET_W - 50, tearY, COLOR.navy, 0.4);
   const centers = (CENTERS_BY_COUNT[cols.length] || []).map((f) => TICKET_W * f);
@@ -327,12 +327,6 @@ function drawClassicFooter(ctx, match, dateStr, timeStr, cols) {
       ctx.restore();
     }
   });
-
-  // Edge notches are filled navy (not cut out as transparency) so the exported PNG stays fully
-  // opaque and never turns black in apps that don't render transparency. (White would be
-  // invisible against the white footer.)
-  ctx.fillStyle = COLOR.navy;
-  [0, TICKET_W].forEach((x) => { ctx.beginPath(); ctx.arc(x, tearY, 28, 0, Math.PI * 2); ctx.fill(); });
 }
 
 function drawDefaultVariant(ctx, { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeStr }) {
