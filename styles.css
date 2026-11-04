@@ -4,7 +4,7 @@
    Palette: red is the dominant background/primary color throughout the app shell (darker
    end of the red range for backgrounds/surfaces, brighter end for primary actions/emphasis).
    Navy is the secondary/depth color (secondary buttons, borders). Sky blue is reserved for
-   small accent details only (Skip/secondary links, focus rings) — never a large fill.
+   tiny accent details only (currently just the input focus ring) — never a large fill.
 
    Background ("Fine Grid, soft"): a gentle radial gradient from --red-mid to --red-deep, with a
    hairline grid + small corner crosshairs that fade out toward the edges. It's drawn on two
@@ -118,15 +118,12 @@ body::after {
   color: var(--white);
 }
 .btn-link {
-  /* Deliberately the one place sky blue carries meaning: a small, low-emphasis text
-     action (Skip / Make another), never a fill. */
+  /* Low-emphasis text action (Skip / Make Another): white, underlined, never a fill. */
   background: transparent;
-  color: var(--sky);
+  color: var(--white);
   text-decoration: underline;
   padding: 12px 8px;
 }
-/* "Skip" links are white rather than the blue accent. (Other text links, e.g. Make Another, keep the accent.) */
-.btn-link.btn-skip { color: var(--white); }
 
 /* ---------- Welcome ---------- */
 .welcome-content {
