@@ -62,8 +62,28 @@ does not use the browser/device's own time zone at any point.
 ## User flow
 
 Welcome → (optional) photo upload → (optional) section/row/seat → generate/loading →
-preview with Save / Share / Make another. Each step's Skip button is honored — an
-unset photo renders as a placeholder graphic; unset section/row/seat render as "—".
+preview with Save / Share / Make Another. Each step's Skip button is honored — an
+unset photo renders as an on-brand placeholder graphic; any unset section/row/seat field is
+left off the ticket entirely.
+
+## Seat-field content filter
+
+Whatever a fan types into section / row / seat gets printed on the ticket image, so
+[`js/content-filter.js`](js/content-filter.js) blocks cuss words, inappropriate words, and
+politically charged / controversial terms when they tap **Make My Ticket**. The message names the
+field ("Section contains language that isn't allowed…") without repeating the word.
+
+- Runs entirely in the browser; the word list ships with the page. Nothing is sent or stored.
+- It catches stretched-out spellings ("fuuuck"), number-for-letter swaps ("5hit", "c0ck"), and
+  common misspellings. Digit-only entries ("455", "717") are never treated as words.
+- Two lists keep innocent entries safe: long/unambiguous words are blocked anywhere in an entry
+  (`BLOCKED_SUBSTRINGS`); short/ambiguous ones only when they are the whole entry
+  (`BLOCKED_EXACT`, so "ASS" is blocked but "CLASS" and "PASS" are fine).
+- **The list is a starting point and the political section is a judgment call.** Add or remove
+  lowercase, letters-only words in `js/content-filter.js`. If a real section name is blocked by
+  mistake, move the word from `BLOCKED_SUBSTRINGS` to `BLOCKED_EXACT` or delete it. A blocklist
+  can't be complete, so it reduces misuse rather than eliminating it.
+- The file necessarily contains offensive terms. Skip skips the check (nothing is printed).
 
 ## WebView considerations
 

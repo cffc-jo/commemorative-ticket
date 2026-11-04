@@ -204,6 +204,15 @@ function onSeatSubmit() {
     errorEl.hidden = false;
     return;
   }
+
+  // Whatever's typed here gets printed on the ticket, so block inappropriate language (js/content-filter.js).
+  const blocked = findBlockedFields([["Section", section], ["Row", row], ["Seat", seat]]);
+  if (blocked.length) {
+    const names = blocked.length === 1 ? blocked[0] : blocked.slice(0, -1).join(", ") + " and " + blocked[blocked.length - 1];
+    errorEl.textContent = `${names} ${blocked.length === 1 ? "contains" : "contain"} language that isn't allowed. Please change it.`;
+    errorEl.hidden = false;
+    return;
+  }
   errorEl.hidden = true;
 
   state.section = section;
