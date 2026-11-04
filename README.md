@@ -34,13 +34,18 @@ Key fields:
 - `isHome` — controls "VS" vs. "@", and which crest sits on which side. **Decision made
   here:** home matches show the Fire crest on the left ("Fire VS Opponent"); away
   matches show the opponent's crest on the left ("Opponent @ ..." reads as the hosting
-  club). Flip the `fireSlot`/`oppSlot` logic in [`js/ticket-canvas.js`](js/ticket-canvas.js)
-  if club design wants the opposite convention.
+  club). Change the `crestOnLeft` logic in `drawSplitHeader` (and the `fireSlot`/`oppSlot`
+  logic in `drawWireframeVariant`) in [`js/ticket-canvas.js`](js/ticket-canvas.js) if club
+  design wants the opposite convention.
 - `opponent.logoUrl` — relative path to a logo file. A library of MLS club logos lives in
   `assets/logos/` (one file per club code, e.g. `assets/logos/nyc.png`; see the table in
   [`assets/logos/README.md`](assets/logos/README.md)). If the file is missing or fails to
-  load, the ticket falls back to a clearly-labeled "OPPONENT LOGO" placeholder box
-  rather than breaking.
+  load, the ticket falls back to a clearly-labeled "OPPONENT LOGO" placeholder rather
+  than breaking.
+- `ticketTemplateVariant` — optional. `"default"` (or omitted) is the split red/navy banner
+  header with a classic footer and tear-off stub for section/row/seat. `"wireframe"` is the
+  original plain layout that follows `wireframe.png` literally. Unknown values fall back to
+  the default.
 - `date` / `kickoffTime` / `timezone` — always entered **local to the venue**. The app
   converts to Central time for display (see "Time zone" below), so venue timezone must
   be accurate for the conversion to be correct.

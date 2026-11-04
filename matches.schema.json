@@ -84,7 +84,7 @@
         },
         "ticketTemplateVariant": {
           "type": "string",
-          "description": "Optional. Selects an alternate ticket art variant if more than one exists (e.g. \"default\", \"rivalry\", \"playoff\"). Omit to use the default template."
+          "description": "Optional. Selects the ticket art variant. Supported: \"default\" (split red/navy banner header with classic tear-off footer) and \"wireframe\" (the original plain layout). Omit, or use any other value, to get the default template."
         }
       }
     }
