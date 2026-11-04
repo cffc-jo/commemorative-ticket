@@ -125,6 +125,8 @@ body::after {
   text-decoration: underline;
   padding: 12px 8px;
 }
+/* "Skip" links are white rather than the blue accent. (Other text links, e.g. Make Another, keep the accent.) */
+.btn-link.btn-skip { color: var(--white); }
 
 /* ---------- Welcome ---------- */
 .welcome-content {
@@ -138,7 +140,7 @@ body::after {
 }
 .crest-hero { width: 140px; height: 140px; margin-bottom: 8px; }
 .welcome-content h1 { font-size: 28px; margin: 0; line-height: 1.2; }
-.welcome-subtitle { color: var(--text-soft); font-size: 15px; margin: 0 0 16px; min-height: 1.2em; }
+.welcome-subtitle { color: var(--text-soft); font-size: 15px; line-height: 1.5; margin: 0 0 16px; min-height: 1.2em; white-space: pre-line; }
 .welcome-content .btn { margin-top: 8px; }
 
 /* ---------- Step screens (upload / seat) ---------- */

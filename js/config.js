@@ -119,12 +119,15 @@ function formatMatchDateTimeCentral(match) {
   const instant = zonedWallClockToUtc(match.date, match.kickoffTime, match.timezone);
   const DISPLAY_TZ = "America/Chicago";
 
-  const dateStr = new Intl.DateTimeFormat("en-US", {
+  // dateText = regular capitalization ("August 23, 2026", used on the welcome screen);
+  // dateStr = ALL CAPS (used on the ticket itself).
+  const dateText = new Intl.DateTimeFormat("en-US", {
     timeZone: DISPLAY_TZ,
     month: "long",
     day: "numeric",
     year: "numeric",
-  }).format(instant).toUpperCase();
+  }).format(instant);
+  const dateStr = dateText.toUpperCase();
 
   const timeStr = new Intl.DateTimeFormat("en-US", {
     timeZone: DISPLAY_TZ,
@@ -132,5 +135,5 @@ function formatMatchDateTimeCentral(match) {
     minute: "2-digit",
   }).format(instant) + " CT";
 
-  return { dateStr, timeStr };
+  return { dateStr, dateText, timeStr };
 }

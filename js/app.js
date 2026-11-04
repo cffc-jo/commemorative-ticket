@@ -74,10 +74,12 @@ function resetAll() {
 
   state.crestImage = await loadImageSafe("assets/fire-crest.svg");
 
-  const { dateStr } = formatMatchDateTimeCentral(state.match);
+  // Welcome subtitle, two lines: "Chicago Fire FC vs. <Opponent>" (or "@" for away games),
+  // then the match date in regular capitalization (the line break comes from white-space: pre-line).
+  const { dateText } = formatMatchDateTimeCentral(state.match);
   const verb = state.match.isHome ? "vs." : "@";
   document.getElementById("welcome-subtitle").textContent =
-    `${verb} ${state.match.opponent.name} — ${dateStr}`;
+    `Chicago Fire FC ${verb} ${state.match.opponent.name}\n${dateText}`;
 
   wireEvents();
 })();
