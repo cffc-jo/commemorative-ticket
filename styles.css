@@ -161,8 +161,33 @@ body::after {
 .upload-preview-wrap img { width: 100%; height: 100%; object-fit: cover; }
 .upload-placeholder { color: rgba(255,255,255,0.6); font-size: 14px; }
 
-.seat-form { display: flex; gap: 12px; margin-bottom: 8px; }
-.seat-field { flex: 1; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--white); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+/* Vertical stack of buttons (used for the upload step's actions). */
+.stack { display: flex; flex-direction: column; gap: 10px; }
+.stack .btn-link { align-self: center; }
+
+/* Seat step: everything centered, with the header + fields grouped in the middle of the screen
+   and the actions pinned at the bottom (.step-nav). */
+.step-centered { text-align: center; }
+.step-center-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.step-center-block .step-hint { margin-bottom: 28px; }
+.step-center-block .field-error { width: 100%; max-width: 280px; }
+
+.seat-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 8px;
+}
+.seat-field { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; color: var(--white); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .seat-field input {
   font-family: inherit;
   font-size: 20px;
@@ -224,17 +249,23 @@ body::after {
 .loading-content p { color: var(--text-soft); font-size: 14px; margin: 0; letter-spacing: 0.03em; }
 
 /* ---------- Preview ---------- */
+/* Ticket + its actions form one group, centered both ways on the screen (no gap between them). */
 .preview-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 16px;
 }
 #ticket-canvas {
-  width: 100%;
-  max-width: 340px;
+  /* Natural size is the 1080px canvas, capped to 340px wide AND to the space left after the
+     buttons, so the whole group still fits on short phones (aspect ratio is preserved). */
+  width: auto;
   height: auto;
+  max-width: min(100%, 340px);
+  max-height: calc(100vh - 220px - var(--safe-top) - var(--safe-bottom));
+  max-height: calc(100dvh - 220px - var(--safe-top) - var(--safe-bottom));
   border-radius: 6px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.5);
 }
@@ -243,9 +274,12 @@ body::after {
   max-width: 340px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: auto;
+  align-items: center;
+  gap: 4px;
 }
+/* Share + Save Image side by side; if Share isn't available, Save Image fills the row. */
+.preview-buttons { display: flex; gap: 12px; width: 100%; }
+.preview-buttons .btn { flex: 1; }
 
 /* ---------- Error screen ---------- */
 .error-box {

@@ -51,40 +51,44 @@
            library is offered as a choice rather than being bypassed. -->
       <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif" hidden>
 
-      <button id="btn-choose-photo" class="btn btn-primary" type="button">Upload photo</button>
-
-      <div class="step-nav">
+      <!-- One primary button does double duty: "Upload Photo" until a photo is chosen, then "Next"
+           (see syncUploadControls in js/app.js). "Choose a Different Photo" appears under it once
+           there's a photo; "Skip" is only offered while there isn't one. -->
+      <div class="stack">
+        <button id="btn-choose-photo" class="btn btn-primary" type="button">Upload Photo</button>
+        <button id="btn-change-photo" class="btn btn-secondary" type="button" hidden>Choose a Different Photo</button>
         <button id="btn-upload-skip" class="btn btn-link" type="button">Skip</button>
-        <button id="btn-upload-next" class="btn btn-secondary" type="button" disabled>Next</button>
       </div>
     </div>
   </section>
 
   <!-- ============ Screen 3: section / row / seat ============ -->
   <section id="screen-seat" class="screen">
-    <div class="step-content">
-      <h2>Add your seat</h2>
-      <p class="step-hint">Optional — up to 10 letters/numbers each.</p>
+    <div class="step-content step-centered">
+      <div class="step-center-block">
+        <h2>Add Your Seat</h2>
+        <p class="step-hint"><em>Optional</em></p>
 
-      <form id="seat-form" class="seat-form" novalidate>
-        <label class="seat-field">
-          <span>Section</span>
-          <input id="input-section" name="section" type="text" maxlength="10" autocomplete="off" inputmode="text">
-        </label>
-        <label class="seat-field">
-          <span>Row</span>
-          <input id="input-row" name="row" type="text" maxlength="10" autocomplete="off" inputmode="text">
-        </label>
-        <label class="seat-field">
-          <span>Seat</span>
-          <input id="input-seat" name="seat" type="text" maxlength="10" autocomplete="off" inputmode="text">
-        </label>
-      </form>
-      <p id="seat-error" class="field-error" role="alert" hidden></p>
+        <form id="seat-form" class="seat-form" novalidate>
+          <label class="seat-field">
+            <span>Section</span>
+            <input id="input-section" name="section" type="text" maxlength="10" autocomplete="off" inputmode="text">
+          </label>
+          <label class="seat-field">
+            <span>Row</span>
+            <input id="input-row" name="row" type="text" maxlength="10" autocomplete="off" inputmode="text">
+          </label>
+          <label class="seat-field">
+            <span>Seat</span>
+            <input id="input-seat" name="seat" type="text" maxlength="10" autocomplete="off" inputmode="text">
+          </label>
+        </form>
+        <p id="seat-error" class="field-error" role="alert" hidden></p>
+      </div>
 
       <div class="step-nav">
         <button id="btn-seat-skip" class="btn btn-link" type="button">Skip</button>
-        <button id="btn-seat-next" class="btn btn-secondary" type="button">Make my ticket</button>
+        <button id="btn-seat-next" class="btn btn-secondary" type="button">Make My Ticket</button>
       </div>
     </div>
   </section>
@@ -103,9 +107,11 @@
       <canvas id="ticket-canvas"></canvas>
       <p id="share-error" class="field-error" role="alert" hidden></p>
       <div class="preview-actions">
-        <button id="btn-share" class="btn btn-primary" type="button" hidden>Share</button>
-        <button id="btn-save" class="btn btn-secondary" type="button">Save image</button>
-        <button id="btn-restart" class="btn btn-link" type="button">Make another</button>
+        <div class="preview-buttons">
+          <button id="btn-share" class="btn btn-primary" type="button" hidden>Share</button>
+          <button id="btn-save" class="btn btn-secondary" type="button">Save Image</button>
+        </div>
+        <button id="btn-restart" class="btn btn-link" type="button">Make Another</button>
       </div>
     </div>
   </section>

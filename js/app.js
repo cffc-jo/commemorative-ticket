@@ -48,7 +48,7 @@ function resetAll() {
   placeholder.hidden = false;
   document.getElementById("file-input").value = "";
   document.getElementById("upload-error").hidden = true;
-  document.getElementById("btn-upload-next").disabled = true;
+  syncUploadControls();
 
   document.getElementById("seat-form").reset();
   document.getElementById("seat-error").hidden = true;
@@ -87,14 +87,22 @@ function wireEvents() {
 
   // ---- Upload step ----
   const fileInput = document.getElementById("file-input");
-  document.getElementById("btn-choose-photo").addEventListener("click", () => fileInput.click());
+  // The primary button is "Upload Photo" until a photo is chosen, then it becomes "Next".
+  document.getElementById("btn-choose-photo").addEventListener("click", () => {
+    if (state.photoImage) showScreen("screen-seat");
+    else fileInput.click();
+  });
+  document.getElementById("btn-change-photo").addEventListener("click", () => {
+    fileInput.value = ""; // so re-picking the same file still fires a change event
+    fileInput.click();
+  });
   fileInput.addEventListener("change", onFileSelected);
 
   document.getElementById("btn-upload-skip").addEventListener("click", () => {
     state.photoImage = null;
     showScreen("screen-seat");
   });
-  document.getElementById("btn-upload-next").addEventListener("click", () => showScreen("screen-seat"));
+  syncUploadControls();
 
   // ---- Seat step ----
   document.getElementById("btn-seat-skip").addEventListener("click", () => {
@@ -164,7 +172,19 @@ async function onFileSelected(evt) {
   preview.src = objectUrl;
   preview.hidden = false;
   placeholder.hidden = true;
-  document.getElementById("btn-upload-next").disabled = false;
+  syncUploadControls();
+}
+
+/**
+ * Upload step buttons depend on whether a photo has been chosen:
+ *   no photo:   [Upload Photo]                     + Skip
+ *   has photo:  [Next]  [Choose a Different Photo]   (Skip is hidden — it would discard the photo)
+ */
+function syncUploadControls() {
+  const hasPhoto = !!state.photoImage;
+  document.getElementById("btn-choose-photo").textContent = hasPhoto ? "Next" : "Upload Photo";
+  document.getElementById("btn-change-photo").hidden = !hasPhoto;
+  document.getElementById("btn-upload-skip").hidden = hasPhoto;
 }
 
 // ---------------------------------------------------------------------------

@@ -107,18 +107,23 @@ function fitFont(ctx, text, weight, maxSize, minSize, maxWidth, spacing = 0) {
 // ---------------------------------------------------------------------------
 // Texture / shape helpers
 // ---------------------------------------------------------------------------
-/** Six-pointed star (the Chicago flag / Fire crest star). */
+/**
+ * Chicago-flag star: six long, sharp points with deep notches between them, like "✶" (U+2736).
+ * (Not a hexagram / Star of David: that's two overlapping triangles with stubby points.)
+ * `r` is the tip radius; the notches sit at STAR_INNER_RATIO of it. Lower = pointier.
+ */
+const STAR_INNER_RATIO = 0.38;
 function starPath(ctx, cx, cy, r) {
+  const inner = r * STAR_INNER_RATIO;
   ctx.beginPath();
-  for (let k = 0; k < 2; k++) {
-    for (let i = 0; i < 3; i++) {
-      const a = ((-90 + k * 60 + i * 120) * Math.PI) / 180;
-      const px = cx + r * Math.cos(a);
-      const py = cy + r * Math.sin(a);
-      if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py);
-    }
-    ctx.closePath();
+  for (let i = 0; i < 12; i++) {
+    const radius = i % 2 === 0 ? r : inner;          // even = tip, odd = notch
+    const a = ((-90 + i * 30) * Math.PI) / 180;       // one tip points straight up
+    const px = cx + radius * Math.cos(a);
+    const py = cy + radius * Math.sin(a);
+    if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py);
   }
+  ctx.closePath();
 }
 
 function drawStarGrid(ctx, x, y, w, h, step, r, color, alpha) {
@@ -306,7 +311,7 @@ function drawPhotoPlaceholder(ctx, crestImage) {
   g.addColorStop(1, COLOR.navyBlack);
   ctx.fillStyle = g;
   ctx.fillRect(0, HEADER_H, TICKET_W, PHOTO_H);
-  drawStarGrid(ctx, 0, HEADER_H, TICKET_W, PHOTO_H, 110, 17, COLOR.white, 0.06);
+  drawStarGrid(ctx, 0, HEADER_H, TICKET_W, PHOTO_H, 110, 23, COLOR.white, 0.08);
   if (crestImage) drawImageFit(ctx, crestImage, TICKET_W / 2, HEADER_H + PHOTO_H / 2, 380);
 }
 
