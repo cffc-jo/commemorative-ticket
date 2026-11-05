@@ -71,7 +71,8 @@ left off the ticket entirely.
 Whatever a fan types into section / row / seat gets printed on the ticket image, so
 [`js/content-filter.js`](js/content-filter.js) blocks cuss words, inappropriate words, and
 politically charged / controversial terms when they tap **Make My Ticket**. The message names the
-field ("Section contains language that isn't allowed…") without repeating the word.
+field ("Section is not a valid input.", or "Section and row are not valid inputs." when several
+are flagged) without repeating the word.
 
 - Runs entirely in the browser; the word list ships with the page. Nothing is sent or stored.
 - It catches stretched-out spellings ("fuuuck"), number-for-letter swaps ("5hit", "c0ck"), and

@@ -192,6 +192,22 @@ function syncUploadControls() {
 // ---------------------------------------------------------------------------
 // Seat step
 // ---------------------------------------------------------------------------
+
+/**
+ * Error text for blocked seat fields. It names the field(s) but never repeats what was typed:
+ *   ["Section"]                  -> "Section is not a valid input."
+ *   ["Section", "Row"]           -> "Section and row are not valid inputs."
+ *   ["Section", "Row", "Seat"]   -> "Section, row, and seat are not valid inputs."
+ */
+function invalidInputMessage(labels) {
+  const names = labels.map((label, i) => (i === 0 ? label : label.toLowerCase()));
+  let list;
+  if (names.length === 1) list = names[0];
+  else if (names.length === 2) list = `${names[0]} and ${names[1]}`;
+  else list = `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
+  return `${list} ${names.length === 1 ? "is not a valid input" : "are not valid inputs"}.`;
+}
+
 function onSeatSubmit() {
   const section = document.getElementById("input-section").value.trim();
   const row = document.getElementById("input-row").value.trim();
@@ -208,8 +224,7 @@ function onSeatSubmit() {
   // Whatever's typed here gets printed on the ticket, so block inappropriate language (js/content-filter.js).
   const blocked = findBlockedFields([["Section", section], ["Row", row], ["Seat", seat]]);
   if (blocked.length) {
-    const names = blocked.length === 1 ? blocked[0] : blocked.slice(0, -1).join(", ") + " and " + blocked[blocked.length - 1];
-    errorEl.textContent = `${names} ${blocked.length === 1 ? "contains" : "contain"} language that isn't allowed. Please change it.`;
+    errorEl.textContent = invalidInputMessage(blocked);
     errorEl.hidden = false;
     return;
   }
