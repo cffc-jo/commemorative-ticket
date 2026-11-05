@@ -318,7 +318,12 @@ function isIOS() {
 }
 
 function setupPreviewActions() {
-  document.getElementById("btn-share").hidden = !canShareTicketFile();
+  const canShare = canShareTicketFile();
+  document.getElementById("btn-share").hidden = !canShare;
+  // On iPhone/iPad the share sheet is the only way into Photos, so a separate Save Image button
+  // would just open that same sheet: show only Share. If the share sheet isn't available there,
+  // keep Save Image (it falls back to the touch-and-hold screen) so there's still a way to save.
+  document.getElementById("btn-save").hidden = isIOS() && canShare;
   document.getElementById("share-error").hidden = true;
 }
 
@@ -378,15 +383,21 @@ async function onShare() {
   errorEl.hidden = true;
   if (!state.ticketBlob) return;
   try {
-    const file = new File([state.ticketBlob], ticketFilename(), { type: "image/png" });
-    await navigator.share({
-      files: [file],
-      title: "Chicago Fire FC",
-      text: "My commemorative match ticket",
-    });
+    const data = { files: [makeTicketFile()] };
+    // On iOS send only the image: a caption alongside it can make the sheet stop offering "Save Image"
+    // (to Photos), and on iPhone this button is the only way to save.
+    if (!isIOS()) {
+      data.title = "Chicago Fire FC";
+      data.text = "My commemorative match ticket";
+    }
+    await navigator.share(data);
   } catch (err) {
     if (err && err.name === "AbortError") return; // user cancelled the share sheet — not an error
     console.error("[commemorative-ticket] share failed:", err);
+    if (isIOS()) {
+      openSaveOverlay(); // Save Image is hidden on iOS, so fall back to the touch-and-hold screen
+      return;
+    }
     errorEl.textContent = "Sharing isn't available right now — try Save Image instead.";
     errorEl.hidden = false;
   }
