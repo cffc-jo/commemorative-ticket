@@ -118,6 +118,14 @@
 
 </div>
 
+<!-- iOS fallback for "Save Image" when the share sheet isn't available: shows the ticket full screen so it
+     can be touched-and-held and saved to Photos (see onSave in js/app.js). -->
+<div id="save-overlay" class="save-overlay" hidden role="dialog" aria-modal="true" aria-label="Save your ticket">
+  <p>Touch and hold your ticket, then tap Save to Photos.</p>
+  <img id="save-overlay-img" alt="Your ticket">
+  <button id="btn-save-done" class="btn btn-primary" type="button">Done</button>
+</div>
+
 <script src="js/config.js"></script>
 <script src="js/ticket-canvas.js"></script>
 <script src="js/content-filter.js"></script>

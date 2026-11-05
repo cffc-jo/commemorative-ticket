@@ -18,6 +18,7 @@ const state = {
   row: "",
   seat: "",
   ticketBlob: null,
+  saveOverlayUrl: null, // object URL for the iOS long-press save fallback, while it's open
 };
 
 // ---------------------------------------------------------------------------
@@ -54,6 +55,7 @@ function resetAll() {
   document.getElementById("seat-error").hidden = true;
 
   document.getElementById("share-error").hidden = true;
+  closeSaveOverlay();
 
   showScreen("screen-welcome");
 }
@@ -115,6 +117,7 @@ function wireEvents() {
 
   // ---- Preview step ----
   document.getElementById("btn-save").addEventListener("click", onSave);
+  document.getElementById("btn-save-done").addEventListener("click", closeSaveOverlay);
   document.getElementById("btn-share").addEventListener("click", onShare);
   document.getElementById("btn-restart").addEventListener("click", resetAll);
 }
@@ -288,28 +291,38 @@ function ticketFilename() {
   return `chicago-fire-ticket-${id}.png`;
 }
 
-function setupPreviewActions() {
-  const shareBtn = document.getElementById("btn-share");
-  let canShareFiles = false;
+function makeTicketFile() {
+  return new File([state.ticketBlob], ticketFilename(), { type: "image/png" });
+}
+
+/**
+ * True if this browser/WebView can share the ticket PNG as a file. Requires BOTH share() and
+ * canShare() to be real functions — some WebViews/browsers expose one without the other (or a
+ * non-functional stub), which would otherwise offer a button that fails when tapped.
+ */
+function canShareTicketFile() {
   try {
-    // Require BOTH share() and canShare() to be real functions — some WebViews/browsers
-    // expose one without the other (or a non-functional stub), which would otherwise show
-    // a Share button that fails when tapped.
-    if (typeof navigator.share === "function" &&
-        typeof navigator.canShare === "function" &&
-        state.ticketBlob) {
-      const testFile = new File([state.ticketBlob], ticketFilename(), { type: "image/png" });
-      canShareFiles = navigator.canShare({ files: [testFile] });
-    }
+    return typeof navigator.share === "function" &&
+      typeof navigator.canShare === "function" &&
+      !!state.ticketBlob &&
+      navigator.canShare({ files: [makeTicketFile()] });
   } catch (e) {
-    canShareFiles = false;
+    return false;
   }
-  shareBtn.hidden = !canShareFiles;
+}
+
+/** iPhone / iPod / iPad (iPadOS reports itself as a Mac, so also check for touch). */
+function isIOS() {
+  return /iP(hone|od|ad)/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+function setupPreviewActions() {
+  document.getElementById("btn-share").hidden = !canShareTicketFile();
   document.getElementById("share-error").hidden = true;
 }
 
-function onSave() {
-  if (!state.ticketBlob) return;
+function downloadTicket() {
   const url = URL.createObjectURL(state.ticketBlob);
   const a = document.createElement("a");
   a.href = url;
@@ -318,6 +331,46 @@ function onSave() {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/**
+ * Save Image.
+ *  - iOS: a web page can't write straight into the Photos library, and a plain download just opens a
+ *    file preview. The share sheet's "Save Image" action is the way into the camera roll, so open it
+ *    with only the image. If the share sheet isn't available (some app WebViews block it), fall back
+ *    to a full-screen view of the ticket with a "touch and hold to save" prompt.
+ *  - Everywhere else (Android, desktop): a normal file download.
+ */
+async function onSave() {
+  if (!state.ticketBlob) return;
+  if (!isIOS()) {
+    downloadTicket();
+    return;
+  }
+  if (canShareTicketFile()) {
+    try {
+      await navigator.share({ files: [makeTicketFile()] });
+      return;
+    } catch (err) {
+      if (err && err.name === "AbortError") return; // they closed the sheet: nothing to do
+      console.error("[commemorative-ticket] share sheet failed, using the long-press fallback:", err);
+    }
+  }
+  openSaveOverlay();
+}
+
+function openSaveOverlay() {
+  if (state.saveOverlayUrl) URL.revokeObjectURL(state.saveOverlayUrl);
+  state.saveOverlayUrl = URL.createObjectURL(state.ticketBlob);
+  document.getElementById("save-overlay-img").src = state.saveOverlayUrl;
+  document.getElementById("save-overlay").hidden = false;
+}
+
+function closeSaveOverlay() {
+  document.getElementById("save-overlay").hidden = true;
+  document.getElementById("save-overlay-img").removeAttribute("src");
+  if (state.saveOverlayUrl) URL.revokeObjectURL(state.saveOverlayUrl);
+  state.saveOverlayUrl = null;
 }
 
 async function onShare() {
@@ -334,7 +387,7 @@ async function onShare() {
   } catch (err) {
     if (err && err.name === "AbortError") return; // user cancelled the share sheet — not an error
     console.error("[commemorative-ticket] share failed:", err);
-    errorEl.textContent = "Sharing isn't available right now — try Save image instead.";
+    errorEl.textContent = "Sharing isn't available right now — try Save Image instead.";
     errorEl.hidden = false;
   }
 }

@@ -280,6 +280,34 @@ body::after {
 .preview-buttons { display: flex; gap: 12px; width: 100%; }
 .preview-buttons .btn { flex: 1; }
 
+/* ---------- iOS "touch and hold to save" fallback ---------- */
+.save-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10; /* above #app */
+  background: var(--red-black);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: calc(24px + var(--safe-top)) 24px calc(24px + var(--safe-bottom));
+  text-align: center;
+}
+.save-overlay[hidden] { display: none; } /* the flex above would otherwise beat the UA [hidden] rule */
+.save-overlay p { margin: 0; font-size: 15px; color: var(--text-soft); }
+.save-overlay img {
+  width: auto;
+  height: auto;
+  max-width: min(100%, 340px);
+  max-height: calc(100vh - 220px - var(--safe-top) - var(--safe-bottom));
+  max-height: calc(100dvh - 220px - var(--safe-top) - var(--safe-bottom));
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  -webkit-touch-callout: default; /* keep the long-press "Save to Photos" menu available */
+}
+.save-overlay .btn { width: 100%; max-width: 340px; }
+
 /* ---------- Error screen ---------- */
 .error-box {
   flex: 1;

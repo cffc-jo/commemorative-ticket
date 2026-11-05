@@ -90,8 +90,15 @@ are flagged) without repeating the word.
 
 - Feature-detects `navigator.share` / `navigator.canShare({ files })` before showing
   the Share button — if the WebView doesn't support sharing files, the button is
-  simply hidden and "Save image" is the only action offered. No error is shown for a
+  simply hidden and "Save Image" is the only action offered. No error is shown for a
   missing Share button.
+- **Save Image on iPhone/iPad.** A web page can't write straight into the Photos library, and a plain
+  file download on iOS just opens a file preview. So on iOS, **Save Image opens the iOS share sheet
+  with only the image**, where the "Save Image" action puts it in the camera roll. If the share sheet
+  isn't available (some app WebViews block it), it falls back to a full-screen view of the ticket with a
+  "Touch and hold your ticket, then tap Save to Photos" prompt. Android and desktop use a normal
+  download. (Logic: `onSave` in `js/app.js`.) **Needs a check on a real iPhone inside the actual app
+  WebView; see the open item below.**
 - Layout is mobile-viewport-only (`max-width: 480px`, no desktop/tablet breakpoints) —
   this page is never expected to render in a desktop browser tab.
 - **Built against the "live URL" assumption**: the page expects to be loaded by the
