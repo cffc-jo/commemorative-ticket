@@ -95,8 +95,8 @@ are flagged) without repeating the word.
 - **Saving on iPhone/iPad.** A web page can't write straight into the Photos library, and a plain
   file download on iOS just opens a file preview. So on iOS the **Share button is the only action**
   (Save Image is hidden, since it would open the same sheet): it opens the iOS share sheet with
-  only the image, where the "Save Image" action puts it in the camera roll. (The share sends just the
-  image on iOS, with no caption, so the sheet keeps offering "Save Image".) If the share sheet isn't
+  only the image, where the "Save Image" action puts it in the camera roll. (Share sends just the
+  image on every device, with no caption, so the iOS sheet keeps offering "Save Image".) If the share sheet isn't
   available (some app WebViews block it), Share is hidden and **Save Image** returns, showing a
   full-screen view of the ticket with a "Touch and hold your ticket, then tap Save to Photos"
   prompt; if Share is tapped and fails on iOS, that same screen opens. Android and desktop show

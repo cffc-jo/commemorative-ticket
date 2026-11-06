@@ -383,14 +383,9 @@ async function onShare() {
   errorEl.hidden = true;
   if (!state.ticketBlob) return;
   try {
-    const data = { files: [makeTicketFile()] };
-    // On iOS send only the image: a caption alongside it can make the sheet stop offering "Save Image"
-    // (to Photos), and on iPhone this button is the only way to save.
-    if (!isIOS()) {
-      data.title = "Chicago Fire FC";
-      data.text = "My commemorative match ticket";
-    }
-    await navigator.share(data);
+    // Share just the image, with no caption/title. (On iOS a caption alongside the image can make the
+    // sheet stop offering "Save Image" to Photos, and there this button is the only way to save.)
+    await navigator.share({ files: [makeTicketFile()] });
   } catch (err) {
     if (err && err.name === "AbortError") return; // user cancelled the share sheet — not an error
     console.error("[commemorative-ticket] share failed:", err);
