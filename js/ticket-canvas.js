@@ -201,7 +201,7 @@ function drawLogoPlaceholder(ctx, x, y, size) {
  * Draws a logo with a white outline that follows its shape (no background disc).
  * Built by stamping a white silhouette of the logo around a small circle, then drawing the logo on top.
  */
-function drawStrokedLogo(ctx, img, cx, cy, box, stroke = 9) {
+function drawStrokedLogo(ctx, img, cx, cy, box, stroke = 3) {  // stroke = outline thickness in px (was 9)
   const scale = Math.min(box / img.width, box / img.height);
   const w = Math.round(img.width * scale);
   const h = Math.round(img.height * scale);

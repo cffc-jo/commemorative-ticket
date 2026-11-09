@@ -4,7 +4,7 @@
    Palette: red is the dominant background/primary color throughout the app shell (darker
    end of the red range for backgrounds/surfaces, brighter end for primary actions/emphasis).
    Navy is the secondary/depth color (secondary buttons, borders). Sky blue is reserved for
-   tiny accent details only (currently just the input focus ring) — never a large fill.
+   tiny accent details only (the input focus ring and the loading bar) — never a large fill.
 
    Background ("Fine Grid, soft"): a gentle radial gradient from --red-mid to --red-deep, with a
    hairline grid + small corner crosshairs that fade out toward the edges. It's drawn on two
@@ -272,7 +272,7 @@ body::after {
 .progress-fill {
   height: 100%;
   width: 8%;
-  background: linear-gradient(90deg, var(--red-mid), var(--red-bright));
+  background: var(--sky); /* light blue so it stands out on the red background */
   border-radius: 4px;
   transition: width 0.25s ease;
 }
