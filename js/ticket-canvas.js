@@ -3,16 +3,12 @@
  *   header (crests + VS/@)  →  caption strip (competition / round)  →  photo area
  *   →  footer (date / venue + kickoff / section / row / seat)
  * Everything here is synchronous pixel-pushing — no network calls, no storage.
- *
- * Template variants (match.ticketTemplateVariant in matches.json):
- *   "default"   — split red/navy banner header, hatch texture, classic footer with tear-off stub.
- *   "wireframe" — the original plain layout that follows wireframe.png literally.
- * Any other / missing value falls back to "default".
+ * Look: split red/navy banner header, hatch texture, classic footer with tear-off stub.
  */
 
 const TICKET_W = 1080;
 const TICKET_H = 1667;
-// Default template, top to bottom:  header (300) · caption strip (127) · photo (868) · footer (372).
+// Layout, top to bottom:  header (300) · caption strip (127) · photo (868) · footer (372).
 // The strip holds the competition + round lines; the photo is the same size it has always been.
 const HEADER_H = 300;
 const STRIP_H = 127;
@@ -184,22 +180,8 @@ function buildSeatColumns(section, row, seat) {
   ].filter((col) => col.value.length > 0);
 }
 
-/** Draws a labeled placeholder box, used (wireframe variant) when an opponent logo is absent. */
-function drawLogoPlaceholder(ctx, x, y, size) {
-  ctx.save();
-  ctx.strokeStyle = COLOR.nearBlack;
-  ctx.lineWidth = 2;
-  ctx.strokeRect(x, y, size, size);
-  ctx.fillStyle = COLOR.nearBlack;
-  ctx.font = `600 26px ${FONT_STACK}`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  wrapText(ctx, "OPPONENT\nLOGO", x + size / 2, y + size / 2, 26);
-  ctx.restore();
-}
-
 // ===========================================================================
-// DEFAULT VARIANT — split banner header + classic footer with tear-off stub
+// TICKET — split banner header + classic footer with tear-off stub
 // ===========================================================================
 
 /**
@@ -415,7 +397,7 @@ function drawClassicFooter(ctx, match, dateStr, timeText, cols) {
   });
 }
 
-function drawDefaultVariant(ctx, { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeText }) {
+function drawTicket(ctx, { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeText }) {
   ctx.fillStyle = COLOR.white;
   ctx.fillRect(0, 0, TICKET_W, TICKET_H);
 
@@ -444,98 +426,6 @@ function drawDefaultVariant(ctx, { match, photoImage, crestImage, opponentLogo, 
 }
 
 // ===========================================================================
-// WIREFRAME VARIANT — the original plain layout, per wireframe.png
-// ===========================================================================
-function drawWireframeVariant(ctx, { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeStr }) {
-  // This legacy layout has no caption strip: its photo starts right under the header and its footer is the
-  // original 472px (starting at y=1195). Local values keep it exactly as it was.
-  const PHOTO_H = 895; // fixed here so changes to the default template's caption strip don't resize it
-  const FOOTER_Y = HEADER_H + PHOTO_H;
-  const FOOTER_H = TICKET_H - FOOTER_Y;
-
-  ctx.fillStyle = COLOR.white;
-  ctx.fillRect(0, 0, TICKET_W, TICKET_H);
-
-  // ---- header ----
-  const headerCy = HEADER_H / 2;
-  const crestSize = 220;
-  const logoSize = 220;
-  const leftCx = 300;
-  const rightCx = TICKET_W - 300;
-  const fireSlot = { cx: match.isHome ? leftCx : rightCx };
-  const oppSlot = { cx: match.isHome ? rightCx : leftCx };
-
-  if (crestImage) {
-    ctx.drawImage(crestImage, fireSlot.cx - crestSize / 2, headerCy - crestSize / 2, crestSize, crestSize);
-  }
-  if (opponentLogo) {
-    drawImageFit(ctx, opponentLogo, oppSlot.cx, headerCy, logoSize);
-  } else {
-    drawLogoPlaceholder(ctx, oppSlot.cx - logoSize / 2, headerCy - logoSize / 2, logoSize);
-  }
-  ctx.fillStyle = COLOR.nearBlack;
-  ctx.font = `800 46px ${FONT_STACK}`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(match.isHome ? "VS" : "@", TICKET_W / 2, headerCy);
-
-  // ---- photo ----
-  if (photoImage) {
-    drawImageCover(ctx, photoImage, 0, HEADER_H, TICKET_W, PHOTO_H);
-  } else {
-    ctx.fillStyle = "#D4D4D4";
-    ctx.fillRect(0, HEADER_H, TICKET_W, PHOTO_H);
-    ctx.fillStyle = "#8A8A8A";
-    ctx.font = `700 44px ${FONT_STACK}`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("CHICAGO FIRE FC", TICKET_W / 2, HEADER_H + PHOTO_H / 2);
-  }
-  ctx.fillStyle = COLOR.redBright;
-  ctx.fillRect(0, FOOTER_Y, TICKET_W, 6);
-
-  // ---- footer ----
-  ctx.fillStyle = COLOR.white;
-  ctx.fillRect(0, FOOTER_Y, TICKET_W, FOOTER_H);
-  let cursorY = FOOTER_Y + 60;
-  if (match.competition) {
-    ctx.fillStyle = COLOR.redMid;
-    ctx.font = `700 28px ${FONT_STACK}`;
-    ctx.textAlign = "left";
-    ctx.textBaseline = "alphabetic";
-    ctx.fillText(match.competition.toUpperCase(), 60, cursorY);
-    cursorY += 54;
-  } else {
-    cursorY += 10;
-  }
-  ctx.fillStyle = COLOR.nearBlack;
-  ctx.font = `800 74px ${FONT_STACK}`;
-  ctx.textAlign = "left";
-  ctx.textBaseline = "alphabetic";
-  ctx.fillText(dateStr, 60, cursorY + 60);
-  cursorY += 100;
-  ctx.font = `700 34px ${FONT_STACK}`;
-  ctx.fillText(`${match.venue.name.toUpperCase()} | ${match.venue.city.toUpperCase()}`, 60, cursorY + 20);
-  cursorY += 60;
-  ctx.fillStyle = COLOR.redMid;
-  ctx.font = `700 28px ${FONT_STACK}`;
-  ctx.fillText(`KICKOFF ${timeStr}`, 60, cursorY + 20);
-
-  const colCenters = (CENTERS_BY_COUNT[cols.length] || []).map((f) => TICKET_W * f);
-  const rowY = FOOTER_Y + FOOTER_H - 90;
-  cols.forEach((col, i) => {
-    ctx.textAlign = "center";
-    ctx.fillStyle = COLOR.navy;
-    ctx.font = `400 36px ${FONT_STACK}`;
-    ctx.textBaseline = "alphabetic";
-    ctx.fillText(col.value, colCenters[i], rowY);
-    ctx.fillStyle = COLOR.nearBlack;
-    ctx.font = `800 42px ${FONT_STACK}`;
-    ctx.fillText(col.label, colCenters[i], rowY + 48);
-  });
-}
-
-// ===========================================================================
 // Entry point
 // ===========================================================================
 /**
@@ -555,17 +445,11 @@ async function renderTicket(canvas, { match, photoImage, crestImage, section, ro
   const ctx = canvas.getContext("2d");
 
   const opponentLogo = await loadImageSafe(match.opponent.logoUrl);
-  const { dateStr, timeStr, timeText } = formatMatchDateTimeCentral(match);
+  const { dateStr, timeText } = formatMatchDateTimeCentral(match);
   const cols = buildSeatColumns(section, row, seat);
-  const args = { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeStr, timeText };
 
-  const variant = String(match.ticketTemplateVariant || "default").toLowerCase();
-  if (variant === "wireframe") {
-    drawWireframeVariant(ctx, args);
-  } else {
-    // A fan's own photo always wins. If they skipped it, use the venue's default photo when there is one
-    // (see venuePhotoUrl in config.js); otherwise drawDefaultVariant falls back to the on-brand placeholder.
-    const venuePhoto = photoImage ? null : await loadImageSafe(venuePhotoUrl(match.venue));
-    drawDefaultVariant(ctx, { ...args, photoImage: photoImage || venuePhoto });
-  }
+  // A fan's own photo always wins. If they skipped it, use the venue's default photo when there is one
+  // (see venuePhotoUrl in config.js); otherwise the on-brand placeholder is drawn.
+  const venuePhoto = photoImage ? null : await loadImageSafe(venuePhotoUrl(match.venue));
+  drawTicket(ctx, { match, photoImage: photoImage || venuePhoto, crestImage, opponentLogo, cols, dateStr, timeText });
 }

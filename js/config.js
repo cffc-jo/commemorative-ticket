@@ -76,7 +76,6 @@ function validateMatchConfig(root) {
 
   if (match.competition !== undefined) requireString(match.competition, "match.competition");
   if (match.round !== undefined) requireString(match.round, "match.round");
-  if (match.ticketTemplateVariant !== undefined) requireString(match.ticketTemplateVariant, "match.ticketTemplateVariant");
 
   return match;
 }
@@ -152,11 +151,10 @@ function formatMatchDateTimeCentral(match) {
     hour: "numeric",
     minute: "2-digit",
   }).format(instant);
-  const timeStr = clock + " CT"; // "5:30 PM CT"
 
-  // timeText = "5:30 p.m." (no time zone label; it's always Central). Used on the default ticket.
+  // timeText = "5:30 p.m." (no time zone label; it's always Central). Used on the ticket.
   const parts = clock.match(/^(.*?)[\s ]*(AM|PM)$/i);
   const timeText = parts ? `${parts[1]} ${parts[2][0].toLowerCase()}.m.` : clock;
 
-  return { dateStr, dateText, timeStr, timeText };
+  return { dateStr, dateText, timeText };
 }

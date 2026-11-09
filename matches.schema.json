@@ -56,11 +56,11 @@
             },
             "city": {
               "type": "string",
-              "description": "City/state, e.g. \"Chicago, IL\". Not printed on the default ticket (which shows the venue name and kickoff time); only the \"wireframe\" variant prints it."
+              "description": "City/state, e.g. \"Chicago, IL\". Required, but not printed on the ticket (which shows the venue name and kickoff time)."
             },
             "backgroundImageUrl": {
               "type": "string",
-              "description": "Optional. Relative path to the venue photo used as the ticket's default photo when a fan skips the photo step, e.g. \"assets/venues/seatgeek-stadium.jpg\". If omitted, the app looks for assets/venues/<venue name, lowercased and hyphenated>.jpg (\"SeatGeek Stadium\" -> seatgeek-stadium.jpg) and falls back to the placeholder if there isn't one. Default template only."
+              "description": "Optional. Relative path to the venue photo used as the ticket's default photo when a fan skips the photo step, e.g. \"assets/venues/seatgeek-stadium.jpg\". If omitted, the app looks for assets/venues/<venue name, lowercased and hyphenated>.jpg (\"SeatGeek Stadium\" -> seatgeek-stadium.jpg) and falls back to the placeholder if there isn't one."
             }
           }
         },
@@ -84,11 +84,7 @@
         },
         "round": {
           "type": "string",
-          "description": "Optional round / stage label printed in the caption strip just under the competition, e.g. \"Round 1 Match 1\", \"Conference Semifinals\", \"MLS Cup\". Shown in the default template only."
-        },
-        "ticketTemplateVariant": {
-          "type": "string",
-          "description": "Optional. Selects the ticket art variant. Supported: \"default\" (split red/navy banner header with classic tear-off footer) and \"wireframe\" (the original plain layout). Omit, or use any other value, to get the default template."
+          "description": "Optional round / stage label printed in the caption strip just under the competition, e.g. \"Round 1 Match 1\", \"Conference Semifinals\", \"MLS Cup\". "
         }
       }
     }

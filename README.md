@@ -34,9 +34,8 @@ Key fields:
 - `isHome` — controls "VS" vs. "@", and which crest sits on which side. **Decision made
   here:** home matches show the Fire crest on the left ("Fire VS Opponent"); away
   matches show the opponent's crest on the left ("Opponent @ ..." reads as the hosting
-  club). Change the `crestOnLeft` logic in `drawSplitHeader` (and the `fireSlot`/`oppSlot`
-  logic in `drawWireframeVariant`) in [`js/ticket-canvas.js`](js/ticket-canvas.js) if club
-  design wants the opposite convention.
+  club). Change the `crestOnLeft` logic in `drawSplitHeader` in
+  [`js/ticket-canvas.js`](js/ticket-canvas.js) if club design wants the opposite convention.
 - `opponent.logoUrl` — relative path to a logo file. A library of MLS club logos lives in
   `assets/logos/` (one file per club code, e.g. `assets/logos/nyc.png`; see the table in
   [`assets/logos/README.md`](assets/logos/README.md)). If the file is missing or fails to
@@ -44,20 +43,15 @@ Key fields:
   than breaking.
 - `competition` / `round` — both optional. They print as two caption lines in a white strip (with the
   same fine hatch texture as the footer) between the matchup header and the photo, e.g. "AUDI 2026 MLS
-  CUP PLAYOFFS" and "ROUND 1 MATCH 1" (default template only). If a match has neither, the strip is
-  skipped and the photo grows into its space.
-- `venue` — on the default ticket the line under the date reads "VENUE NAME | KICKOFF 5:30 P.M."
-  (the kickoff time is converted to Central, no zone label). `venue.city` is still required in the
-  config but is only printed by the `wireframe` variant.
+  CUP PLAYOFFS" and "ROUND 1 MATCH 1". If a match has neither, the strip is skipped and the photo grows into its space.
+- `venue` — the line under the date reads "VENUE NAME | KICKOFF 5:30 P.M." (the kickoff time is
+  converted to Central, no zone label). `venue.city` is still required in the config but is not
+  printed on the ticket.
 - Venue default photo — when a fan skips the photo step, the ticket uses the venue's photo instead of
   the placeholder (a photo the fan uploads always wins). It's found by file name: `assets/venues/` +
   the venue name lowercased and hyphenated + `.jpg` ("SeatGeek Stadium" → `seatgeek-stadium.jpg`,
   already included). Set `venue.backgroundImageUrl` to use a different path. No file → placeholder.
-  Default template only; see [`assets/venues/README.md`](assets/venues/README.md).
-- `ticketTemplateVariant` — optional. `"default"` (or omitted) is the split red/navy banner
-  header with a classic footer and tear-off stub for section/row/seat. `"wireframe"` is the
-  original plain layout that follows `wireframe.png` literally. Unknown values fall back to
-  the default.
+  See [`assets/venues/README.md`](assets/venues/README.md).
 - `date` / `kickoffTime` / `timezone` — always entered **local to the venue**. The app
   converts to Central time for display (see "Time zone" below), so venue timezone must
   be accurate for the conversion to be correct.
