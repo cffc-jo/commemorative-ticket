@@ -13,7 +13,7 @@ photo step. A photo the fan uploads always wins.
 So to give another venue a default photo, just drop a correctly named JPEG in this folder. No code or
 `matches.json` change is needed. The legacy `wireframe` variant doesn't use venue photos.
 
-**Image tips:** landscape works best (the photo area is roughly 1080 × 895 and the image is cropped to
+**Image tips:** landscape works best (the photo area is roughly 1080 × 868 and the image is cropped to
 fill it, centered). Around 1600 px wide at JPEG quality ~85 keeps the file near 250 KB, which is
 fast enough for a mobile WebView.
 

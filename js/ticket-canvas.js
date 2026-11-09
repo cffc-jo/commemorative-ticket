@@ -12,13 +12,13 @@
 
 const TICKET_W = 1080;
 const TICKET_H = 1667;
-// Default template, top to bottom:  header (300) · caption strip (100) · photo (895) · footer (372).
+// Default template, top to bottom:  header (300) · caption strip (127) · photo (868) · footer (372).
 // The strip holds the competition + round lines; the photo is the same size it has always been.
 const HEADER_H = 300;
-const STRIP_H = 100;
+const STRIP_H = 127;
 const FOOTER_H = 372;
 const PHOTO_TOP = HEADER_H + STRIP_H;
-const PHOTO_H = TICKET_H - HEADER_H - STRIP_H - FOOTER_H; // 895
+const PHOTO_H = TICKET_H - HEADER_H - STRIP_H - FOOTER_H; // 868
 const FOOTER_Y = PHOTO_TOP + PHOTO_H;
 
 const FONT_STACK = '-apple-system, "Segoe UI", Arial, sans-serif';
@@ -328,8 +328,8 @@ function drawPhotoPlaceholder(ctx, crestImage, top, height) {
 /** The caption lines for the strip under the header: the competition (red) and, if set, the round (navy). */
 function captionLines(match) {
   return [
-    { text: match.competition, color: COLOR.redMid, size: 26, spacing: 6 },
-    { text: match.round, color: COLOR.navy, size: 24, spacing: 5 },
+    { text: match.competition, color: COLOR.redMid, size: 41, spacing: 6, weight: 900 },
+    { text: match.round, color: COLOR.navy, size: 39, spacing: 5, weight: 700 },
   ].filter((line) => line.text);
 }
 
@@ -346,13 +346,13 @@ function drawCaptionStrip(ctx, lines) {
   ctx.fillRect(0, y, TICKET_W, STRIP_H);
   drawHatch(ctx, 0, y, TICKET_W, STRIP_H - 16, 14, COLOR.navy, 0.035, 2);
 
-  const baselines = lines.length === 2 ? [36, 66] : [50];
+  const baselines = lines.length === 2 ? [50, 92] : [66];
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
   lines.forEach((line, i) => {
     const text = line.text.toUpperCase();
     ctx.fillStyle = line.color;
-    fitFont(ctx, text, 700, line.size, 18, maxW, line.spacing);
+    fitFont(ctx, text, line.weight || 700, line.size, 18, maxW, line.spacing);
     drawSpaced(ctx, text, TICKET_W / 2, y + baselines[i], line.spacing, "center");
   });
 
@@ -379,7 +379,7 @@ function drawClassicFooter(ctx, match, dateStr, timeText, cols) {
   const dateY = FOOTER_Y + (hasStub ? 114 : 193);
 
   ctx.fillStyle = COLOR.redMid; // the date is the headline, in the same red as the strip's competition line
-  fitFont(ctx, dateStr, 800, 84, 44, maxW);
+  fitFont(ctx, dateStr, 800, 74, 44, maxW);
   ctx.fillText(dateStr, cx, dateY);
 
   // Venue and kickoff time share one line, e.g. "SEATGEEK STADIUM  |  KICKOFF 5:30 P.M."
@@ -449,6 +449,7 @@ function drawDefaultVariant(ctx, { match, photoImage, crestImage, opponentLogo, 
 function drawWireframeVariant(ctx, { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeStr }) {
   // This legacy layout has no caption strip: its photo starts right under the header and its footer is the
   // original 472px (starting at y=1195). Local values keep it exactly as it was.
+  const PHOTO_H = 895; // fixed here so changes to the default template's caption strip don't resize it
   const FOOTER_Y = HEADER_H + PHOTO_H;
   const FOOTER_H = TICKET_H - FOOTER_Y;
 
