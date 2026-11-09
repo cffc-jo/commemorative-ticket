@@ -256,8 +256,13 @@ function drawLogoPlaceholderRing(ctx, cx, cy, box) {
 }
 
 function drawSplitHeader(ctx, match, crestImage, opponentLogo) {
-  const seamTop = 640;
-  const seamBottom = 500;
+  // Everything in the header is laid out symmetrically around the ticket's exact center (x = 540):
+  // the diagonal seam crosses mid-height right at the center, the VS medallion sits there, and the two
+  // logos are centered in their halves (x = 270 and 810), so the gaps on either side of the medallion
+  // and the margins at the edges all match.
+  const midX = TICKET_W / 2;
+  const seamTop = midX + 70;
+  const seamBottom = midX - 70;
   const cy = HEADER_H / 2;
 
   // red left half, navy right half, split on a diagonal seam
@@ -276,8 +281,8 @@ function drawSplitHeader(ctx, match, crestImage, opponentLogo) {
   // Both logos get the same bounding box. The opponent always has a white outline so dark crests
   // stay legible on either half; on away games the Fire crest also sits on the navy half, where
   // its own navy ring would otherwise vanish, so it gets the same outline.
-  const leftCx = 250;
-  const rightCx = TICKET_W - 270;
+  const leftCx = TICKET_W / 4;        // 270: center of the left half
+  const rightCx = (TICKET_W * 3) / 4; // 810: center of the right half
   const logoBox = 214;
   const drawOpponent = (x) => {
     if (opponentLogo) drawStrokedLogo(ctx, opponentLogo, x, cy, logoBox);
@@ -291,8 +296,8 @@ function drawSplitHeader(ctx, match, crestImage, opponentLogo) {
     if (crestImage) drawStrokedLogo(ctx, crestImage, rightCx, cy, logoBox);
   }
 
-  // VS / @ medallion centered on the seam at mid-height
-  const mx = seamTop - ((seamTop - seamBottom) * cy) / HEADER_H;
+  // VS / @ medallion: dead center of the ticket, on the seam at mid-height
+  const mx = midX;
   ctx.save();
   ctx.shadowColor = "rgba(0,0,0,0.3)"; ctx.shadowBlur = 16;
   ctx.fillStyle = COLOR.white;
