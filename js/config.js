@@ -130,11 +130,16 @@ function formatMatchDateTimeCentral(match) {
   }).format(instant);
   const dateStr = dateText.toUpperCase();
 
-  const timeStr = new Intl.DateTimeFormat("en-US", {
+  const clock = new Intl.DateTimeFormat("en-US", {
     timeZone: DISPLAY_TZ,
     hour: "numeric",
     minute: "2-digit",
-  }).format(instant) + " CT";
+  }).format(instant);
+  const timeStr = clock + " CT"; // "5:30 PM CT"
 
-  return { dateStr, dateText, timeStr };
+  // timeText = "5:30 p.m." (no time zone label; it's always Central). Used on the default ticket.
+  const parts = clock.match(/^(.*?)[\s ]*(AM|PM)$/i);
+  const timeText = parts ? `${parts[1]} ${parts[2][0].toLowerCase()}.m.` : clock;
+
+  return { dateStr, dateText, timeStr, timeText };
 }

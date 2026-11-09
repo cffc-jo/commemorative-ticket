@@ -315,10 +315,12 @@ function drawPhotoPlaceholder(ctx, crestImage) {
   if (crestImage) drawImageFit(ctx, crestImage, TICKET_W / 2, HEADER_H + PHOTO_H / 2, 380);
 }
 
-function drawClassicFooter(ctx, match, dateStr, timeStr, cols) {
+function drawClassicFooter(ctx, match, dateStr, timeText, cols) {
   const hasStub = cols.length > 0;
-  // With no seat info the stub is dropped, so re-center the info block in the freed space.
-  const oy = hasStub ? 0 : 80;
+  // Vertical offset for the whole info block. The block is 44px shorter than it used to be (kickoff now
+  // shares the venue line), so it's nudged down 22px to stay centered; with no seat info the stub is
+  // dropped and the block is re-centered in the freed space (+80).
+  const oy = hasStub ? 22 : 102;
 
   // navy (thin, on top) + red (thicker, below) rule under the photo
   ctx.fillStyle = COLOR.navy; ctx.fillRect(0, FOOTER_Y, TICKET_W, 4);
@@ -350,13 +352,12 @@ function drawClassicFooter(ctx, match, dateStr, timeStr, cols) {
   fitFont(ctx, dateStr, 800, 84, 44, maxW);
   ctx.fillText(dateStr, cx, dateY);
 
-  const venue = `${match.venue.name.toUpperCase()}  |  ${match.venue.city.toUpperCase()}`;
+  // Venue and kickoff time share one line, e.g. "SEATGEEK STADIUM  |  KICKOFF 5:30 P.M."
+  // (the venue's city is no longer printed on the default ticket).
+  const venue = `${match.venue.name.toUpperCase()}  |  KICKOFF ${timeText.toUpperCase()}`;
+  ctx.fillStyle = COLOR.navy;
   fitFont(ctx, venue, 700, 31, 18, maxW, 3);
   drawSpaced(ctx, venue, cx, dateY + 54, 3, "center");
-
-  ctx.fillStyle = COLOR.redMid;
-  fitFont(ctx, `KICKOFF ${timeStr}`, 700, 26, 18, maxW, 4);
-  drawSpaced(ctx, `KICKOFF ${timeStr}`, cx, dateY + 98, 4, "center");
 
   if (!hasStub) return;
 
@@ -384,7 +385,7 @@ function drawClassicFooter(ctx, match, dateStr, timeStr, cols) {
   });
 }
 
-function drawDefaultVariant(ctx, { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeStr }) {
+function drawDefaultVariant(ctx, { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeText }) {
   ctx.fillStyle = COLOR.white;
   ctx.fillRect(0, 0, TICKET_W, TICKET_H);
 
@@ -402,7 +403,7 @@ function drawDefaultVariant(ctx, { match, photoImage, crestImage, opponentLogo, 
   ctx.fillStyle = shade;
   ctx.fillRect(0, HEADER_H, TICKET_W, 70);
 
-  drawClassicFooter(ctx, match, dateStr, timeStr, cols);
+  drawClassicFooter(ctx, match, dateStr, timeText, cols);
 }
 
 // ===========================================================================
@@ -511,9 +512,9 @@ async function renderTicket(canvas, { match, photoImage, crestImage, section, ro
   const ctx = canvas.getContext("2d");
 
   const opponentLogo = await loadImageSafe(match.opponent.logoUrl);
-  const { dateStr, timeStr } = formatMatchDateTimeCentral(match);
+  const { dateStr, timeStr, timeText } = formatMatchDateTimeCentral(match);
   const cols = buildSeatColumns(section, row, seat);
-  const args = { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeStr };
+  const args = { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeStr, timeText };
 
   const variant = String(match.ticketTemplateVariant || "default").toLowerCase();
   if (variant === "wireframe") drawWireframeVariant(ctx, args);

@@ -56,7 +56,7 @@
             },
             "city": {
               "type": "string",
-              "description": "City/state for display, e.g. \"Chicago, IL\"."
+              "description": "City/state, e.g. \"Chicago, IL\". Not printed on the default ticket (which shows the venue name and kickoff time); only the \"wireframe\" variant prints it."
             },
             "backgroundImageUrl": {
               "type": "string",

@@ -44,6 +44,9 @@ Key fields:
   than breaking.
 - `competition` / `round` — both optional. They print as two small caption lines above the date on
   the ticket, e.g. "AUDI 2026 MLS CUP PLAYOFFS" and "ROUND 1 MATCH 1" (default template only).
+- `venue` — on the default ticket the line under the date reads "VENUE NAME | KICKOFF 5:30 P.M."
+  (the kickoff time is converted to Central, no zone label). `venue.city` is still required in the
+  config but is only printed by the `wireframe` variant.
 - `ticketTemplateVariant` — optional. `"default"` (or omitted) is the split red/navy banner
   header with a classic footer and tear-off stub for section/row/seat. `"wireframe"` is the
   original plain layout that follows `wireframe.png` literally. Unknown values fall back to
