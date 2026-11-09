@@ -8,9 +8,23 @@
 
    Background ("Fine Grid, soft"): a gentle radial gradient from --red-mid to --red-deep, with a
    hairline grid + small corner crosshairs that fade out toward the edges. It's drawn on two
-   fixed, non-interactive layers (body::before / body::after) behind #app. */
+   fixed, non-interactive layers (body::before / body::after) behind #app.
+
+   Headers use MLS Tifo Headline Bold (the club's headline font, same file as the schedule project),
+   served from assets/fonts/ with no outside font service. font-display: swap shows the phone's own
+   font for a moment if the file is slow, then swaps, so a header is never invisible. */
+
+@font-face {
+  font-family: "MLS Tifo Headline";
+  src: url("assets/fonts/mls-tifo-headline-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
+  --font-headline: "MLS Tifo Headline", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
   --red-bright: #FF0000;
   --red-mid: #AA0000;
   --red-deep: #760000;
@@ -38,6 +52,12 @@ html, body {
   font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   overscroll-behavior-y: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Every screen header (welcome, add photo, add seat, config error). */
+h1, h2 {
+  font-family: var(--font-headline);
+  text-wrap: balance; /* if a header has to wrap on a narrow phone, split it evenly (no lone last word) */
 }
 
 /* Layer 1: soft red gradient, centered roughly where the ticket / main content sits. */
@@ -142,7 +162,7 @@ body::after {
 
 /* ---------- Step screens (upload / seat) ---------- */
 .step-content { display: flex; flex-direction: column; flex: 1; }
-.step-content h2 { font-size: 22px; margin: 0 0 4px; }
+.step-content h2 { font-size: 20px; margin: 0 0 4px; } /* 20px keeps "Add a Photo from the Match" on one line on a 375px phone (Tifo Headline is a wide face) */
 .step-hint { color: var(--text-soft); font-size: 14px; margin: 0 0 20px; }
 
 .upload-preview-wrap {
