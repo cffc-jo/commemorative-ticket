@@ -1,23 +1,22 @@
 {
   "schemaVersion": "1.0",
-  "lastUpdated": "2026-08-17T10:00:00-05:00",
+  "lastUpdated": "2026-11-09T11:20:00-06:00",
   "match": {
-    "id": "2026-08-23-chi-vs-nycfc",
+    "id": "2026-11-22-chi-vs-clt",
     "opponent": {
-      "name": "New York City FC",
-      "shortName": "NYCFC",
-      "logoUrl": "assets/logos/nyc.png"
+      "name": "Charlotte FC",
+      "shortName": "CLT",
+      "logoUrl": "assets/logos/clt.png"
     },
     "isHome": true,
     "venue": {
-      "name": "Soldier Field",
-      "city": "Chicago, IL",
-      "backgroundImageUrl": "assets/venues/soldier-field.jpg"
+      "name": "SeatGeek Stadium",
+      "city": "Bridgeview, IL"
     },
-    "date": "2026-08-23",
-    "kickoffTime": "19:30",
+    "date": "2026-11-22",
+    "kickoffTime": "17:30",
     "timezone": "America/Chicago",
-    "competition": "MLS Regular Season",
+    "competition": "Audi 2026 MLS Cup Playoffs",
     "ticketTemplateVariant": "default"
   }
 }
