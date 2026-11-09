@@ -60,7 +60,7 @@
             },
             "backgroundImageUrl": {
               "type": "string",
-              "description": "Optional. Relative path to a venue photo/illustration used as ticket background art, if the design calls for a venue-specific background."
+              "description": "Optional. Relative path to the venue photo used as the ticket's default photo when a fan skips the photo step, e.g. \"assets/venues/seatgeek-stadium.jpg\". If omitted, the app looks for assets/venues/<venue name, lowercased and hyphenated>.jpg (\"SeatGeek Stadium\" -> seatgeek-stadium.jpg) and falls back to the placeholder if there isn't one. Default template only."
             }
           }
         },

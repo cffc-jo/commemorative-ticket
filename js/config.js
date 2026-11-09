@@ -115,6 +115,23 @@ function zonedWallClockToUtc(dateStr, timeStr, timeZone) {
   return new Date(naiveUtc.getTime() + offsetMs);
 }
 
+/**
+ * The default ticket photo for a venue, used when the fan skips uploading one.
+ * An explicit venue.backgroundImageUrl in matches.json wins; otherwise it's assets/venues/<venue name>.jpg,
+ * where the name is lowercased and hyphenated ("SeatGeek Stadium" -> assets/venues/seatgeek-stadium.jpg).
+ * So adding a photo with the right file name is all it takes for every match at that venue.
+ * If the file doesn't exist, the ticket falls back to its on-brand placeholder.
+ */
+function venuePhotoUrl(venue) {
+  if (venue.backgroundImageUrl) return venue.backgroundImageUrl;
+  const slug = venue.name
+    .toLowerCase()
+    .normalize("NFKD").replace(/[̀-ͯ]/g, "") // strip accents
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return slug ? `assets/venues/${slug}.jpg` : null;
+}
+
 /** Formats a match's date/kickoff into Central-time display strings, regardless of venue timezone. */
 function formatMatchDateTimeCentral(match) {
   const instant = zonedWallClockToUtc(match.date, match.kickoffTime, match.timezone);

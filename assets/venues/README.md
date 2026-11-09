@@ -1,6 +1,22 @@
-# Venue background art
+# Venue photos
 
-Optional. If a match's `venue.backgroundImageUrl` in `matches.json` points to a file here, it's
-available to the ticket renderer, but neither current template variant ("default" or
-"wireframe") draws a venue background — the photo area and footer stay flat-color per brand
-guidelines. A future `ticketTemplateVariant` could opt into using it.
+A venue's photo is the ticket's **default photo**: it fills the photo area when a fan skips the
+photo step. A photo the fan uploads always wins.
+
+**How a match finds its photo (default template only):**
+
+1. If `match.venue.backgroundImageUrl` is set in `matches.json`, that file is used.
+2. Otherwise the app looks for `assets/venues/<venue name>.jpg`, where the name is lowercased and
+   hyphenated: "SeatGeek Stadium" → `seatgeek-stadium.jpg`, "Soldier Field" → `soldier-field.jpg`.
+3. If no file exists, the ticket shows the navy star-field placeholder.
+
+So to give another venue a default photo, just drop a correctly named JPEG in this folder. No code or
+`matches.json` change is needed. The legacy `wireframe` variant doesn't use venue photos.
+
+**Image tips:** landscape works best (the photo area is roughly 1080 × 895 and the image is cropped to
+fill it, centered). Around 1600 px wide at JPEG quality ~85 keeps the file near 250 KB, which is
+fast enough for a mobile WebView.
+
+| File | Venue |
+|---|---|
+| `seatgeek-stadium.jpg` | SeatGeek Stadium (Bridgeview, IL) |

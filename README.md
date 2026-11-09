@@ -49,6 +49,11 @@ Key fields:
 - `venue` — on the default ticket the line under the date reads "VENUE NAME | KICKOFF 5:30 P.M."
   (the kickoff time is converted to Central, no zone label). `venue.city` is still required in the
   config but is only printed by the `wireframe` variant.
+- Venue default photo — when a fan skips the photo step, the ticket uses the venue's photo instead of
+  the placeholder (a photo the fan uploads always wins). It's found by file name: `assets/venues/` +
+  the venue name lowercased and hyphenated + `.jpg` ("SeatGeek Stadium" → `seatgeek-stadium.jpg`,
+  already included). Set `venue.backgroundImageUrl` to use a different path. No file → placeholder.
+  Default template only; see [`assets/venues/README.md`](assets/venues/README.md).
 - `ticketTemplateVariant` — optional. `"default"` (or omitted) is the split red/navy banner
   header with a classic footer and tear-off stub for section/row/seat. `"wireframe"` is the
   original plain layout that follows `wireframe.png` literally. Unknown values fall back to
@@ -70,7 +75,7 @@ does not use the browser/device's own time zone at any point.
 
 Welcome → (optional) photo upload → (optional) section/row/seat → generate/loading →
 preview with Save / Share / Make Another. Each step's Skip button is honored — an
-unset photo renders as an on-brand placeholder graphic; any unset section/row/seat field is
+unset photo renders as the venue's default photo (e.g. SeatGeek Stadium) or, if the venue has none, an on-brand placeholder graphic; any unset section/row/seat field is
 left off the ticket entirely.
 
 ## Seat-field content filter

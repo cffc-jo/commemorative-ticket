@@ -559,6 +559,12 @@ async function renderTicket(canvas, { match, photoImage, crestImage, section, ro
   const args = { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeStr, timeText };
 
   const variant = String(match.ticketTemplateVariant || "default").toLowerCase();
-  if (variant === "wireframe") drawWireframeVariant(ctx, args);
-  else drawDefaultVariant(ctx, args);
+  if (variant === "wireframe") {
+    drawWireframeVariant(ctx, args);
+  } else {
+    // A fan's own photo always wins. If they skipped it, use the venue's default photo when there is one
+    // (see venuePhotoUrl in config.js); otherwise drawDefaultVariant falls back to the on-brand placeholder.
+    const venuePhoto = photoImage ? null : await loadImageSafe(venuePhotoUrl(match.venue));
+    drawDefaultVariant(ctx, { ...args, photoImage: photoImage || venuePhoto });
+  }
 }
