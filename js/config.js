@@ -75,6 +75,7 @@ function validateMatchConfig(root) {
   }
 
   if (match.competition !== undefined) requireString(match.competition, "match.competition");
+  if (match.round !== undefined) requireString(match.round, "match.round");
   if (match.ticketTemplateVariant !== undefined) requireString(match.ticketTemplateVariant, "match.ticketTemplateVariant");
 
   return match;

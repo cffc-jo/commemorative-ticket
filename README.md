@@ -42,6 +42,8 @@ Key fields:
   [`assets/logos/README.md`](assets/logos/README.md)). If the file is missing or fails to
   load, the ticket falls back to a clearly-labeled "OPPONENT LOGO" placeholder rather
   than breaking.
+- `competition` / `round` — both optional. They print as two small caption lines above the date on
+  the ticket, e.g. "AUDI 2026 MLS CUP PLAYOFFS" and "ROUND 1 MATCH 1" (default template only).
 - `ticketTemplateVariant` — optional. `"default"` (or omitted) is the split red/navy banner
   header with a classic footer and tear-off stub for section/row/seat. `"wireframe"` is the
   original plain layout that follows `wireframe.png` literally. Unknown values fall back to

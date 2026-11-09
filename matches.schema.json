@@ -82,6 +82,10 @@
           "type": "string",
           "description": "Optional competition label, e.g. \"MLS Regular Season\", \"U.S. Open Cup\", \"Leagues Cup\"."
         },
+        "round": {
+          "type": "string",
+          "description": "Optional round / stage label printed on the ticket just under the competition, e.g. \"Round 1 Match 1\", \"Conference Semifinals\", \"MLS Cup\". Shown in the default template only."
+        },
         "ticketTemplateVariant": {
           "type": "string",
           "description": "Optional. Selects the ticket art variant. Supported: \"default\" (split red/navy banner header with classic tear-off footer) and \"wireframe\" (the original plain layout). Omit, or use any other value, to get the default template."

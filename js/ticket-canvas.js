@@ -330,14 +330,21 @@ function drawClassicFooter(ctx, match, dateStr, timeStr, cols) {
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
 
-  let dateY = FOOTER_Y + 168 + oy;
-  if (match.competition) {
-    ctx.fillStyle = COLOR.redMid;
-    fitFont(ctx, match.competition.toUpperCase(), 700, 26, 18, maxW, 6);
-    drawSpaced(ctx, match.competition.toUpperCase(), cx, FOOTER_Y + 76 + oy, 6, "center");
-  } else {
-    dateY -= 28;
-  }
+  // Small caption lines above the date: the competition (red) and, if set, the round (navy),
+  // e.g. "AUDI 2026 MLS CUP PLAYOFFS" / "ROUND 1 MATCH 1". The date shifts down a little to make room.
+  const tagLines = [
+    { text: match.competition, color: COLOR.redMid, size: 26, spacing: 6 },
+    { text: match.round, color: COLOR.navy, size: 24, spacing: 5 },
+  ].filter((line) => line.text);
+  const tagBaselines = tagLines.length === 2 ? [60, 92] : [76];
+  const dateYByCount = { 0: 140, 1: 168, 2: 176 };
+  const dateY = FOOTER_Y + dateYByCount[tagLines.length] + oy;
+  tagLines.forEach((line, i) => {
+    const text = line.text.toUpperCase();
+    ctx.fillStyle = line.color;
+    fitFont(ctx, text, 700, line.size, 18, maxW, line.spacing);
+    drawSpaced(ctx, text, cx, FOOTER_Y + tagBaselines[i] + oy, line.spacing, "center");
+  });
 
   ctx.fillStyle = COLOR.navy;
   fitFont(ctx, dateStr, 800, 84, 44, maxW);
