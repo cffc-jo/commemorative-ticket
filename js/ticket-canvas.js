@@ -348,7 +348,7 @@ function drawClassicFooter(ctx, match, dateStr, timeText, cols) {
     drawSpaced(ctx, text, cx, FOOTER_Y + tagBaselines[i] + oy, line.spacing, "center");
   });
 
-  ctx.fillStyle = COLOR.navy;
+  ctx.fillStyle = COLOR.redBright; // the date is the ticket's headline, in the brand's primary red
   fitFont(ctx, dateStr, 800, 84, 44, maxW);
   ctx.fillText(dateStr, cx, dateY);
 
