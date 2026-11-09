@@ -10,9 +10,10 @@
    hairline grid + small corner crosshairs that fade out toward the edges. It's drawn on two
    fixed, non-interactive layers (body::before / body::after) behind #app.
 
-   Headers use MLS Tifo Headline Bold (the club's headline font, same file as the schedule project),
-   served from assets/fonts/ with no outside font service. font-display: swap shows the phone's own
-   font for a moment if the file is slow, then swaps, so a header is never invisible. */
+   Headers use MLS Tifo Headline Bold and the welcome screen's matchup/date line uses MLS Tifo Standard
+   Regular (the club's fonts, same files as the schedule project), served from assets/fonts/ with no
+   outside font service. font-display: swap shows the phone's own font for a moment if a file is slow,
+   then swaps, so text is never invisible. */
 
 @font-face {
   font-family: "MLS Tifo Headline";
@@ -22,8 +23,17 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "MLS Tifo Standard";
+  src: url("assets/fonts/mls-tifo-standard-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --font-headline: "MLS Tifo Headline", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-standard: "MLS Tifo Standard", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --red-bright: #FF0000;
   --red-mid: #AA0000;
@@ -157,11 +167,12 @@ body::after {
 }
 .crest-hero { width: 140px; height: 140px; margin-bottom: 8px; }
 .welcome-content h1 { font-size: 28px; margin: 0; line-height: 1.2; }
-.welcome-subtitle { color: var(--text-soft); font-size: 15px; line-height: 1.5; margin: 0 0 16px; min-height: 1.2em; white-space: pre-line; }
+.welcome-subtitle { font-family: var(--font-standard); color: var(--text-soft); font-size: 15px; line-height: 1.5; margin: 0 0 16px; min-height: 1.2em; white-space: pre-line; }
 .welcome-content .btn { margin-top: 8px; }
 
 /* ---------- Step screens (upload / seat) ---------- */
 .step-content { display: flex; flex-direction: column; flex: 1; }
+#screen-upload h2 { margin-bottom: 20px; } /* spacing above the photo box now that the line under the header is gone */
 .step-content h2 { font-size: 20px; margin: 0 0 4px; } /* 20px keeps "Add a Photo from the Match" on one line on a 375px phone (Tifo Headline is a wide face) */
 .step-hint { color: var(--text-soft); font-size: 14px; margin: 0 0 20px; }
 

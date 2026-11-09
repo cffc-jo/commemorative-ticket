@@ -134,13 +134,17 @@ the fix is to add a decode step (e.g. the `heic2any` library) in `onFileSelected
 
 ## Fonts
 
-Screen headers (the `h1`/`h2` on the welcome, add-photo, add-seat, and error screens) use **MLS Tifo
-Headline Bold**, the same WOFF2 file the `schedule-download` project uses. It's served from
-`assets/fonts/` (no outside font service) and declared at the top of `styles.css`. Body text and
-buttons still use the phone's system font; the other Tifo files (Standard Regular / Italic / Bold)
-are in `schedule-download/assets/fonts/` if we want them later. The ticket image itself is drawn on a
-canvas with system fonts. **Licensing:** these are MLS's licensed fonts and this repo is public, so
-confirm the MLS license allows serving them on a public site (the schedule project already does).
+Two MLS Tifo files, the same WOFF2 files the `schedule-download` project uses, are served from
+`assets/fonts/` (no outside font service) and declared at the top of `styles.css`:
+- **Tifo Headline Bold** for screen headers (the `h1`/`h2` on the welcome, add-photo, add-seat, and
+  error screens).
+- **Tifo Standard Regular** for the welcome screen's matchup / date line.
+
+Other body text and buttons still use the phone's system font; the remaining Tifo files (Standard
+Italic / Bold) are in `schedule-download/assets/fonts/` if we want them later. The ticket image itself
+is drawn on a canvas with system fonts. **Licensing:** these are MLS's licensed fonts and this repo is
+public, so confirm the MLS license allows serving them on a public site (the schedule project already
+does).
 
 ## Open items / follow-ups
 
