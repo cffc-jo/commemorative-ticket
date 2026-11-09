@@ -42,8 +42,10 @@ Key fields:
   [`assets/logos/README.md`](assets/logos/README.md)). If the file is missing or fails to
   load, the ticket falls back to a clearly-labeled "OPPONENT LOGO" placeholder rather
   than breaking.
-- `competition` / `round` — both optional. They print as two small caption lines above the date on
-  the ticket, e.g. "AUDI 2026 MLS CUP PLAYOFFS" and "ROUND 1 MATCH 1" (default template only).
+- `competition` / `round` — both optional. They print as two caption lines in a white strip (with the
+  same fine hatch texture as the footer) between the matchup header and the photo, e.g. "AUDI 2026 MLS
+  CUP PLAYOFFS" and "ROUND 1 MATCH 1" (default template only). If a match has neither, the strip is
+  skipped and the photo grows into its space.
 - `venue` — on the default ticket the line under the date reads "VENUE NAME | KICKOFF 5:30 P.M."
   (the kickoff time is converted to Central, no zone label). `venue.city` is still required in the
   config but is only printed by the `wireframe` variant.

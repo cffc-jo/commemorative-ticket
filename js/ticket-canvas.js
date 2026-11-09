@@ -1,6 +1,7 @@
 /* ticket-canvas.js
  * Draws the commemorative ticket entirely on a <canvas>:
- *   header (crests + VS/@)  →  photo area  →  footer (date/venue/section/row/seat)
+ *   header (crests + VS/@)  →  caption strip (competition / round)  →  photo area
+ *   →  footer (date / venue + kickoff / section / row / seat)
  * Everything here is synchronous pixel-pushing — no network calls, no storage.
  *
  * Template variants (match.ticketTemplateVariant in matches.json):
@@ -11,10 +12,14 @@
 
 const TICKET_W = 1080;
 const TICKET_H = 1667;
+// Default template, top to bottom:  header (300) · caption strip (100) · photo (895) · footer (372).
+// The strip holds the competition + round lines; the photo is the same size it has always been.
 const HEADER_H = 300;
-const FOOTER_H = 472;
-const PHOTO_H = TICKET_H - HEADER_H - FOOTER_H;
-const FOOTER_Y = HEADER_H + PHOTO_H;
+const STRIP_H = 100;
+const FOOTER_H = 372;
+const PHOTO_TOP = HEADER_H + STRIP_H;
+const PHOTO_H = TICKET_H - HEADER_H - STRIP_H - FOOTER_H; // 895
+const FOOTER_Y = PHOTO_TOP + PHOTO_H;
 
 const FONT_STACK = '-apple-system, "Segoe UI", Arial, sans-serif';
 
@@ -310,22 +315,54 @@ function drawSplitHeader(ctx, match, crestImage, opponentLogo) {
 }
 
 /** On-brand stand-in for when the fan skips the photo: navy gradient, star field, big crest. */
-function drawPhotoPlaceholder(ctx, crestImage) {
-  const g = ctx.createLinearGradient(0, HEADER_H, 0, FOOTER_Y);
+function drawPhotoPlaceholder(ctx, crestImage, top, height) {
+  const g = ctx.createLinearGradient(0, top, 0, top + height);
   g.addColorStop(0, COLOR.navy);
   g.addColorStop(1, COLOR.navyBlack);
   ctx.fillStyle = g;
-  ctx.fillRect(0, HEADER_H, TICKET_W, PHOTO_H);
-  drawStarGrid(ctx, 0, HEADER_H, TICKET_W, PHOTO_H, 110, 23, COLOR.white, 0.08);
-  if (crestImage) drawImageFit(ctx, crestImage, TICKET_W / 2, HEADER_H + PHOTO_H / 2, 380);
+  ctx.fillRect(0, top, TICKET_W, height);
+  drawStarGrid(ctx, 0, top, TICKET_W, height, 110, 23, COLOR.white, 0.08);
+  if (crestImage) drawImageFit(ctx, crestImage, TICKET_W / 2, top + height / 2, 380);
+}
+
+/** The caption lines for the strip under the header: the competition (red) and, if set, the round (navy). */
+function captionLines(match) {
+  return [
+    { text: match.competition, color: COLOR.redMid, size: 26, spacing: 6 },
+    { text: match.round, color: COLOR.navy, size: 24, spacing: 5 },
+  ].filter((line) => line.text);
+}
+
+/**
+ * White strip under the matchup header with the competition and round, e.g.
+ * "AUDI 2026 MLS CUP PLAYOFFS" / "ROUND 1 MATCH 1", on the same fine diagonal hatch as the footer.
+ * A red + navy rule closes it off above the photo: the mirror image of the rule under the photo, so the
+ * photo has a thin navy edge on both sides.
+ */
+function drawCaptionStrip(ctx, lines) {
+  const y = HEADER_H;
+  const maxW = TICKET_W - 120;
+  ctx.fillStyle = COLOR.white;
+  ctx.fillRect(0, y, TICKET_W, STRIP_H);
+  drawHatch(ctx, 0, y, TICKET_W, STRIP_H - 16, 14, COLOR.navy, 0.035, 2);
+
+  const baselines = lines.length === 2 ? [36, 66] : [50];
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+  lines.forEach((line, i) => {
+    const text = line.text.toUpperCase();
+    ctx.fillStyle = line.color;
+    fitFont(ctx, text, 700, line.size, 18, maxW, line.spacing);
+    drawSpaced(ctx, text, TICKET_W / 2, y + baselines[i], line.spacing, "center");
+  });
+
+  // rule above the photo: red (12px) then navy (4px, touching the photo)
+  ctx.fillStyle = COLOR.redBright; ctx.fillRect(0, y + STRIP_H - 16, TICKET_W, 12);
+  ctx.fillStyle = COLOR.navy; ctx.fillRect(0, y + STRIP_H - 4, TICKET_W, 4);
 }
 
 function drawClassicFooter(ctx, match, dateStr, timeText, cols) {
   const hasStub = cols.length > 0;
-  // Vertical offset for the whole info block. The block is 44px shorter than it used to be (kickoff now
-  // shares the venue line), so it's nudged down 22px to stay centered; with no seat info the stub is
-  // dropped and the block is re-centered in the freed space (+80).
-  const oy = hasStub ? 22 : 102;
 
   // navy (thin, on top) + red (thicker, below) rule under the photo
   ctx.fillStyle = COLOR.navy; ctx.fillRect(0, FOOTER_Y, TICKET_W, 4);
@@ -337,23 +374,11 @@ function drawClassicFooter(ctx, match, dateStr, timeText, cols) {
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
 
-  // Small caption lines above the date: the competition (red) and, if set, the round (navy),
-  // e.g. "AUDI 2026 MLS CUP PLAYOFFS" / "ROUND 1 MATCH 1". The date shifts down a little to make room.
-  const tagLines = [
-    { text: match.competition, color: COLOR.redMid, size: 26, spacing: 6 },
-    { text: match.round, color: COLOR.navy, size: 24, spacing: 5 },
-  ].filter((line) => line.text);
-  const tagBaselines = tagLines.length === 2 ? [60, 92] : [76];
-  const dateYByCount = { 0: 140, 1: 168, 2: 176 };
-  const dateY = FOOTER_Y + dateYByCount[tagLines.length] + oy;
-  tagLines.forEach((line, i) => {
-    const text = line.text.toUpperCase();
-    ctx.fillStyle = line.color;
-    fitFont(ctx, text, 700, line.size, 18, maxW, line.spacing);
-    drawSpaced(ctx, text, cx, FOOTER_Y + tagBaselines[i] + oy, line.spacing, "center");
-  });
+  // The footer is just the date and the venue/kickoff line (the competition + round live in the strip
+  // above the photo), centered in the space above the stub, or in the whole footer when there's no stub.
+  const dateY = FOOTER_Y + (hasStub ? 114 : 193);
 
-  ctx.fillStyle = COLOR.redMid; // the date is the headline, in the same red as the caption lines above it
+  ctx.fillStyle = COLOR.redMid; // the date is the headline, in the same red as the strip's competition line
   fitFont(ctx, dateStr, 800, 84, 44, maxW);
   ctx.fillText(dateStr, cx, dateY);
 
@@ -367,11 +392,11 @@ function drawClassicFooter(ctx, match, dateStr, timeText, cols) {
   if (!hasStub) return;
 
   // tear-off stub: dashed line, then section / row / seat
-  const tearY = FOOTER_Y + 312;
+  const tearY = FOOTER_Y + 214;
   drawDashedLine(ctx, 50, TICKET_W - 50, tearY, COLOR.navy, 0.4);
   const centers = (CENTERS_BY_COUNT[cols.length] || []).map((f) => TICKET_W * f);
   const valueMaxW = cols.length === 3 ? 300 : cols.length === 2 ? 400 : 600;
-  const rowY = FOOTER_Y + 396;
+  const rowY = FOOTER_Y + 296;
   cols.forEach((col, i) => {
     ctx.textAlign = "center";
     ctx.fillStyle = COLOR.navy;
@@ -396,17 +421,24 @@ function drawDefaultVariant(ctx, { match, photoImage, crestImage, opponentLogo, 
 
   drawSplitHeader(ctx, match, crestImage, opponentLogo);
 
+  // Caption strip under the header. If the match has neither a competition nor a round, there's nothing
+  // to put in it, so skip it and let the photo use that space instead.
+  const lines = captionLines(match);
+  if (lines.length) drawCaptionStrip(ctx, lines);
+  const photoTop = lines.length ? PHOTO_TOP : HEADER_H;
+  const photoH = lines.length ? PHOTO_H : PHOTO_H + STRIP_H;
+
   if (photoImage) {
-    drawImageCover(ctx, photoImage, 0, HEADER_H, TICKET_W, PHOTO_H);
+    drawImageCover(ctx, photoImage, 0, photoTop, TICKET_W, photoH);
   } else {
-    drawPhotoPlaceholder(ctx, crestImage);
+    drawPhotoPlaceholder(ctx, crestImage, photoTop, photoH);
   }
-  // soft shadow where the header meets the photo
-  const shade = ctx.createLinearGradient(0, HEADER_H, 0, HEADER_H + 70);
+  // soft shadow where the header or strip meets the photo
+  const shade = ctx.createLinearGradient(0, photoTop, 0, photoTop + 70);
   shade.addColorStop(0, "rgba(22,0,8,0.35)");
   shade.addColorStop(1, "rgba(22,0,8,0)");
   ctx.fillStyle = shade;
-  ctx.fillRect(0, HEADER_H, TICKET_W, 70);
+  ctx.fillRect(0, photoTop, TICKET_W, 70);
 
   drawClassicFooter(ctx, match, dateStr, timeText, cols);
 }
@@ -415,6 +447,11 @@ function drawDefaultVariant(ctx, { match, photoImage, crestImage, opponentLogo, 
 // WIREFRAME VARIANT — the original plain layout, per wireframe.png
 // ===========================================================================
 function drawWireframeVariant(ctx, { match, photoImage, crestImage, opponentLogo, cols, dateStr, timeStr }) {
+  // This legacy layout has no caption strip: its photo starts right under the header and its footer is the
+  // original 472px (starting at y=1195). Local values keep it exactly as it was.
+  const FOOTER_Y = HEADER_H + PHOTO_H;
+  const FOOTER_H = TICKET_H - FOOTER_Y;
+
   ctx.fillStyle = COLOR.white;
   ctx.fillRect(0, 0, TICKET_W, TICKET_H);
 

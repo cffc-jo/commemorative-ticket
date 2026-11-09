@@ -80,11 +80,11 @@
         },
         "competition": {
           "type": "string",
-          "description": "Optional competition label, e.g. \"MLS Regular Season\", \"U.S. Open Cup\", \"Leagues Cup\"."
+          "description": "Optional competition label, e.g. \"MLS Regular Season\", \"U.S. Open Cup\", \"Leagues Cup\". Printed in the caption strip between the matchup header and the photo."
         },
         "round": {
           "type": "string",
-          "description": "Optional round / stage label printed on the ticket just under the competition, e.g. \"Round 1 Match 1\", \"Conference Semifinals\", \"MLS Cup\". Shown in the default template only."
+          "description": "Optional round / stage label printed in the caption strip just under the competition, e.g. \"Round 1 Match 1\", \"Conference Semifinals\", \"MLS Cup\". Shown in the default template only."
         },
         "ticketTemplateVariant": {
           "type": "string",
